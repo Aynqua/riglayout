@@ -1,0 +1,732 @@
+{
+  "manufacturer": "Elektron",
+  "model": "Octatrack",
+  "physical": {
+    "width_mm": 1285.04,
+    "height_mm": 664.3,
+    "depth_mm": 45
+  },
+  "components": [
+    {
+      "type": "screw",
+      "label": "Vis 1",
+      "x": 0.028,
+      "y": 0.018,
+      "diameter_mm": 12.71
+    },
+    {
+      "type": "screw",
+      "label": "Vis 2",
+      "x": 0.971,
+      "y": 0.018,
+      "diameter_mm": 12.71
+    },
+    {
+      "type": "screw",
+      "label": "Vis 3",
+      "x": 0.031,
+      "y": 0.971,
+      "diameter_mm": 12.71
+    },
+    {
+      "type": "screw",
+      "label": "Vis 4",
+      "x": 0.479,
+      "y": 0.971,
+      "diameter_mm": 12.71
+    },
+    {
+      "type": "screw",
+      "label": "Vis 5",
+      "x": 0.971,
+      "y": 0.971,
+      "diameter_mm": 12.71
+    },
+    {
+      "type": "logo",
+      "label": "Elektron",
+      "icon_path_d": "M5.848 0.0148L38.335 0.0148L31.837 26.6538L0 26.6538ZM8.447 3.2635L3.899 23.4051L28.589 23.4051L29.888 18.2073L18.193 18.2073L31.837 3.2635Z",
+      "icon_view_box": [0, 0, 38.3342, 26.6686],
+      "icon_fill_rule": "evenodd",
+      "x": 0.967,
+      "y": 0.088,
+      "width_mm": 52.64,
+      "height_mm": 34.0
+    },
+    {
+      "type": "encoder",
+      "label": "Volume casque",
+      "x": 0.059,
+      "y": 0.187,
+      "diameter_mm": 50.82
+    },
+    {
+      "type": "button",
+      "label": "MIDI",
+      "legend": "MIDI",
+      "x": 0.042,
+      "y": 0.310,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Enregistrement 1",
+      "legend": "REC 1",
+      "x": 0.134,
+      "y": 0.276,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Enregistrement 2",
+      "legend": "REC 2",
+      "x": 0.181,
+      "y": 0.276,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Enregistrement 3",
+      "legend": "REC 3",
+      "x": 0.228,
+      "y": 0.276,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Fonction supérieure 1",
+      "x": 0.042,
+      "y": 0.431,
+      "width_mm": 43.56,
+      "height_mm": 43.56
+    },
+    {
+      "type": "button",
+      "label": "Fonction supérieure 2",
+      "x": 0.091,
+      "y": 0.431,
+      "width_mm": 43.56,
+      "height_mm": 43.56
+    },
+    {
+      "type": "button",
+      "label": "Fonction supérieure 3",
+      "x": 0.139,
+      "y": 0.431,
+      "width_mm": 43.56,
+      "height_mm": 43.56
+    },
+    {
+      "type": "button",
+      "label": "Fonction supérieure 4",
+      "x": 0.185,
+      "y": 0.431,
+      "width_mm": 43.56,
+      "height_mm": 43.56
+    },
+    {
+      "type": "button",
+      "label": "Fonction supérieure 5",
+      "x": 0.233,
+      "y": 0.431,
+      "width_mm": 43.56,
+      "height_mm": 43.56
+    },
+    {
+      "type": "button",
+      "label": "Fonction",
+      "legend": "FUNC",
+      "fill": "#E0B329",
+      "stroke": "none",
+      "x": 0.053,
+      "y": 0.578,
+      "width_mm": 63.53,
+      "height_mm": 41.75
+    },
+    {
+      "type": "button",
+      "label": "Cue",
+      "legend": "CUE",
+      "x": 0.139,
+      "y": 0.576,
+      "width_mm": 63.53,
+      "height_mm": 45.38
+    },
+    {
+      "type": "frame",
+      "label": "Écran — cadre",
+      "legend": "Octatrack",
+      "legend_position": "bottom_left",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "x": 0.471,
+      "y": 0.331,
+      "width_mm": 283.14,
+      "height_mm": 219.62
+    },
+    {
+      "type": "screen",
+      "label": "Écran — surface",
+      "x": 0.471,
+      "y": 0.319,
+      "width_mm": 235.95,
+      "height_mm": 147.02
+    },
+    {
+      "type": "button",
+      "label": "Piste 1",
+      "legend": "1",
+      "x": 0.329,
+      "y": 0.193,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Piste 5",
+      "legend": "5",
+      "x": 0.627,
+      "y": 0.193,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Piste 2",
+      "legend": "2",
+      "x": 0.329,
+      "y": 0.283,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Piste 6",
+      "legend": "6",
+      "x": 0.627,
+      "y": 0.283,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Piste 3",
+      "legend": "3",
+      "x": 0.329,
+      "y": 0.373,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Piste 7",
+      "legend": "7",
+      "x": 0.627,
+      "y": 0.373,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Piste 4",
+      "legend": "4",
+      "x": 0.329,
+      "y": 0.463,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Piste 8",
+      "legend": "8",
+      "x": 0.627,
+      "y": 0.463,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Paramètre 1",
+      "x": 0.385,
+      "y": 0.553,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Paramètre 2",
+      "x": 0.431,
+      "y": 0.553,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Paramètre 3",
+      "x": 0.478,
+      "y": 0.553,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Paramètre 4",
+      "x": 0.525,
+      "y": 0.553,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Paramètre 5",
+      "x": 0.572,
+      "y": 0.553,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 1",
+      "x": 0.725,
+      "y": 0.249,
+      "diameter_mm": 52.64
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 2",
+      "x": 0.808,
+      "y": 0.249,
+      "diameter_mm": 52.64
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 3",
+      "x": 0.887,
+      "y": 0.249,
+      "diameter_mm": 52.64
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 4",
+      "x": 0.967,
+      "y": 0.249,
+      "diameter_mm": 52.64
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 5",
+      "x": 0.808,
+      "y": 0.405,
+      "diameter_mm": 52.64
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 6",
+      "x": 0.887,
+      "y": 0.405,
+      "diameter_mm": 52.64
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 7",
+      "x": 0.967,
+      "y": 0.405,
+      "diameter_mm": 52.64
+    },
+    {
+      "type": "button",
+      "label": "Tap tempo",
+      "legend": "TAP",
+      "x": 0.728,
+      "y": 0.405,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Motifs",
+      "legend": "PATTERNS",
+      "x": 0.053,
+      "y": 0.709,
+      "width_mm": 72.6,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Banque",
+      "legend": "BANK",
+      "x": 0.139,
+      "y": 0.709,
+      "width_mm": 72.6,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Oui",
+      "legend": "YES",
+      "x": 0.211,
+      "y": 0.622,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Non",
+      "legend": "NO",
+      "x": 0.211,
+      "y": 0.709,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Haut",
+      "legend": "▲",
+      "x": 0.306,
+      "y": 0.621,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Gauche",
+      "legend": "◄",
+      "x": 0.259,
+      "y": 0.709,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Bas",
+      "legend": "▼",
+      "x": 0.306,
+      "y": 0.709,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Droite",
+      "legend": "►",
+      "x": 0.353,
+      "y": 0.709,
+      "width_mm": 45.38,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Transport 1",
+      "x": 0.448,
+      "y": 0.709,
+      "width_mm": 63.53,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Transport 2",
+      "x": 0.506,
+      "y": 0.709,
+      "width_mm": 63.53,
+      "height_mm": 45.38
+    },
+    {
+      "type": "button",
+      "label": "Transport 3",
+      "x": 0.564,
+      "y": 0.709,
+      "width_mm": 63.53,
+      "height_mm": 45.38
+    },
+    {
+      "type": "pad",
+      "label": "Scène A",
+      "legend": "SCENE A",
+      "x": 0.675,
+      "y": 0.669,
+      "width_mm": 70.79,
+      "height_mm": 68.97
+    },
+    {
+      "type": "pad",
+      "label": "Scène B",
+      "legend": "SCENE B",
+      "x": 0.959,
+      "y": 0.669,
+      "width_mm": 70.79,
+      "height_mm": 68.97
+    },
+    {
+      "type": "frame",
+      "label": "Crossfader — glissière",
+      "x": 0.817,
+      "y": 0.664,
+      "width_mm": 208.73,
+      "height_mm": 14.52
+    },
+    {
+      "type": "pad",
+      "label": "Crossfader — curseur",
+      "x": 0.749,
+      "y": 0.663,
+      "width_mm": 25.41,
+      "height_mm": 70.79
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 01",
+      "legend": "1",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.052,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 02",
+      "legend": "2",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.108,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 03",
+      "legend": "3",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.164,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 04",
+      "legend": "4",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.22,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 05",
+      "legend": "5",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.276,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 06",
+      "legend": "6",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.331,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 07",
+      "legend": "7",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.387,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 08",
+      "legend": "8",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.443,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 09",
+      "legend": "9",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.499,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 10",
+      "legend": "10",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.555,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 11",
+      "legend": "11",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.611,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 12",
+      "legend": "12",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.667,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 13",
+      "legend": "13",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.722,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 14",
+      "legend": "14",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.778,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 15",
+      "legend": "15",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.834,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 16",
+      "legend": "16",
+      "legend_font_size_mm": 4.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.89,
+      "y": 0.854,
+      "width_mm": 58.08,
+      "height_mm": 65.34
+    },
+    {
+      "type": "button",
+      "label": "Page",
+      "legend": "PAGE",
+      "x": 0.955,
+      "y": 0.867,
+      "width_mm": 63.53,
+      "height_mm": 45.39
+    },
+    {
+      "type": "led",
+      "label": "Voyant de page 1",
+      "x": 0.933,
+      "y": 0.795,
+      "diameter_mm": 7.26
+    },
+    {
+      "type": "led",
+      "label": "Voyant de page 2",
+      "x": 0.948,
+      "y": 0.795,
+      "diameter_mm": 7.26
+    },
+    {
+      "type": "led",
+      "label": "Voyant de page 3",
+      "x": 0.963,
+      "y": 0.795,
+      "diameter_mm": 7.26
+    },
+    {
+      "type": "led",
+      "label": "Voyant de page 4",
+      "x": 0.978,
+      "y": 0.795,
+      "diameter_mm": 7.26
+    },
+    {
+      "type": "led",
+      "label": "Voyant Card",
+      "x": 0.649,
+      "y": 0.10,
+      "diameter_mm": 4.0
+    }
+  ],
+  "ports": [
+    {
+      "id": "midi-in",
+      "label": "MIDI In",
+      "direction": "input",
+      "signal": "midi",
+      "connector": "5-pin DIN"
+    },
+    {
+      "id": "midi-out",
+      "label": "MIDI Out",
+      "direction": "output",
+      "signal": "midi",
+      "connector": "5-pin DIN"
+    }
+  ]
+}

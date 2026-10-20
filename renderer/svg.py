@@ -26,24 +26,50 @@ def label_color(theme: Theme) -> str:
 
 
 def draw_device_logo(dwg, logo: LogoComponent, center_x: float, center_y: float, color: str):
-    source_width = 38.3342
-    source_height = 26.6686
-    scale_x = logo.width_mm / source_width
-    scale_y = logo.height_mm / source_height
-    left = center_x - logo.width_mm / 2
-    top = center_y - logo.height_mm / 2
-
-    def point(x: float, y: float) -> str:
-        return f"{left + x * scale_x} {top + y * scale_y}"
-
-    path = (
-        f"M {point(5.848, 0.0148)} L {point(38.335, 0.0148)} "
-        f"L {point(31.837, 26.6538)} L {point(0, 26.6538)} Z "
-        f"M {point(8.447, 3.2635)} L {point(3.899, 23.4051)} "
-        f"L {point(28.589, 23.4051)} L {point(29.888, 18.2073)} "
-        f"L {point(18.193, 18.2073)} L {point(31.837, 3.2635)} Z"
+    draw_custom_icon(
+        dwg, logo.icon_path_d, logo.icon_view_box,
+        center_x, center_y, logo.width_mm, logo.height_mm,
+        color, logo.icon_fill_rule, logo.icon_mode
     )
-    dwg.add(dwg.path(d=path, fill=color, fill_rule="evenodd", stroke="none"))
+
+
+def draw_custom_icon(
+    dwg,
+    path_d: str,
+    view_box: tuple,
+    center_x: float,
+    center_y: float,
+    width: float,
+    height: float,
+    color: str,
+    fill_rule: str = "nonzero",
+    mode: str = "fill"
+):
+    view_x, view_y, view_width, view_height = view_box
+    scale = min(width / view_width, height / view_height)
+    translate_x = center_x - (view_x + view_width / 2) * scale
+    translate_y = center_y - (view_y + view_height / 2) * scale
+    transform = f"translate({translate_x} {translate_y}) scale({scale})"
+
+    if mode == "stroke":
+        fill = "none"
+        stroke = color
+        stroke_width = min(width, height) * 0.06
+    else:
+        fill = color
+        stroke = "none"
+        stroke_width = 0
+
+    dwg.add(dwg.path(
+        d=path_d,
+        transform=transform,
+        fill=fill,
+        fill_rule=fill_rule,
+        stroke=stroke,
+        stroke_width=stroke_width,
+        stroke_linecap="round",
+        stroke_linejoin="round"
+    ))
 
 
 def add_control_icon(dwg, icon: str, center_x: float, center_y: float, width: float, height: float, color: str):
@@ -294,6 +320,8 @@ def add_control_icon(dwg, icon: str, center_x: float, center_y: float, width: fl
             "arrow_left": [(0.3, -0.5), (-0.3, 0), (0.3, 0.5)],
             "arrow_right": [(-0.3, -0.5), (0.3, 0), (-0.3, 0.5)]
         }
+        if icon not in points_by_icon:
+            raise ValueError(f"Icône intégrée inconnue : {icon}. Fournis icon_path_d et icon_view_box.")
         points = points_by_icon[icon]
     dwg.add(dwg.polyline(
         points=[(center_x + x * scale, center_y + y * scale) for x, y in points],
@@ -332,11 +360,19 @@ def add_control_legend(dwg, component, theme: Theme, center_x: float, center_y: 
         ))
         return
 
-    if component.type not in ("button", "pad") or (not legend and not component.icon):
+    if component.type not in ("button", "pad") or (
+        not legend and not component.icon and not component.icon_path_d
+    ):
         return
 
     color = component.legend_color or label_color(theme)
-    if component.icon:
+    if component.icon_path_d and component.icon_view_box:
+        draw_custom_icon(
+            dwg, component.icon_path_d, component.icon_view_box,
+            center_x, center_y, component.width_mm, component.height_mm,
+            color, component.icon_fill_rule, component.icon_mode
+        )
+    elif component.icon:
         add_control_icon(dwg, component.icon, center_x, center_y, component.width_mm, component.height_mm, color)
     elif legend:
         max_font_size = min(

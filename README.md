@@ -1,3 +1,7 @@
+# Format des layouts
+
+Voir [JSON.md](JSON.md) pour le schéma des appareils, composants, icônes vectorielles, ports et scènes.
+
 python -m venv venv
 .\venv\bin\Activate.ps1
 
@@ -18,7 +22,7 @@ python cli.py devices/elektron/digitakt2.json --theme flat --detail
 
 `label` décrit un composant pour les métadonnées et n'est jamais rendu. `legend` désigne le texte réellement imprimé sur une touche; `icon` ajoute un pictogramme à la place. Les icônes disponibles comprennent le transport, les flèches, le clavier, Perform, Save Project, Samples et Tap Tempo. `fill`, `stroke` et `legend_color` permettent les exceptions par composant. `--detail` (alias `--labels`) affiche uniquement les `legend` et icônes déclarés; sans option, le rendu reste minimal. Les thèmes peuvent régler le style des légendes dans `labels` (`fill`, `font_family`, `font_size_mm`).
 
-Le layout Digitakt II décrit notamment la touche FUNC orange, la lecture avec son contour vert, les pictogrammes de transport et de navigation, ainsi que les légendes PERFORM, SAVE PROJECT, SAMPLES, TAP TEMPO et KB SETUP. Le clavier KB SETUP est dessiné en trois touches blanches et deux noires; Play, Record et Stop sont tracés en outline, et les numéros des pads sont soulignés. Les pictogrammes restent des formes SVG simples pour faciliter la vectorisation.
+Le layout Digitakt II décrit notamment la touche FUNC orange, les pictogrammes de transport et de navigation monochromes, ainsi que les légendes PERFORM, SAVE PROJECT, SAMPLES, TAP TEMPO et KB SETUP. Play, Record et Stop sont tracés en outline; le clavier et les numéros soulignés des pads restent des formes SVG simples.
 
 Les appareils peuvent aussi définir leurs ports. Les layouts existants restent valides et obtiennent une liste de ports vide par défaut.
 

@@ -22,7 +22,9 @@
     {
       "type": "logo",
       "label": "Elektron",
-      "icon": "elektron",
+      "icon_path_d": "M5.848 0.0148L38.335 0.0148L31.837 26.6538L0 26.6538ZM8.447 3.2635L3.899 23.4051L28.589 23.4051L29.888 18.2073L18.193 18.2073L31.837 3.2635Z",
+      "icon_view_box": [0, 0, 38.3342, 26.6686],
+      "icon_fill_rule": "evenodd",
       "x": 0.922,
       "y": 0.088,
       "width_mm": 13.5,
@@ -622,6 +624,91 @@
       "y": 0.895,
       "width_mm": 15.8,
       "height_mm": 16.4
+    }
+  ],
+  "ports": [
+    {
+      "id": "audio-out-l",
+      "label": "Main Out L",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm TRS jack",
+      "channels": 1,
+      "balanced": true
+    },
+    {
+      "id": "audio-out-r",
+      "label": "Main Out R",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm TRS jack",
+      "channels": 1,
+      "balanced": true
+    },
+    {
+      "id": "audio-in-l",
+      "label": "Audio In L",
+      "direction": "input",
+      "signal": "audio",
+      "connector": "6.35mm TRS jack",
+      "channels": 1,
+      "balanced": true
+    },
+    {
+      "id": "audio-in-r",
+      "label": "Audio In R",
+      "direction": "input",
+      "signal": "audio",
+      "connector": "6.35mm TRS jack",
+      "channels": 1,
+      "balanced": true
+    },
+    {
+      "id": "headphones",
+      "label": "Headphones",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm TRS stereo jack",
+      "channels": 2,
+      "balanced": false
+    },
+    {
+      "id": "midi-in",
+      "label": "MIDI In",
+      "direction": "input",
+      "signal": "midi",
+      "connector": "5-pin DIN"
+    },
+    {
+      "id": "midi-out",
+      "label": "MIDI Out",
+      "direction": "output",
+      "signal": "midi",
+      "connector": "5-pin DIN"
+    },
+    {
+      "id": "midi-thru-sync-out",
+      "label": "MIDI Thru / DIN Sync Out",
+      "direction": "output",
+      "signal": "midi",
+      "connector": "5-pin DIN",
+      "capabilities": ["midi_thru", "din_sync"]
+    },
+    {
+      "id": "usb",
+      "label": "USB 2.0",
+      "direction": "bidirectional",
+      "signal": "usb",
+      "connector": "USB-B",
+      "capabilities": ["high_speed", "audio", "midi", "overbridge"]
+    },
+    {
+      "id": "power-in",
+      "label": "12V DC In",
+      "direction": "input",
+      "signal": "power",
+      "connector": "DC barrel jack",
+      "voltage_v": 12
     }
   ]
 }

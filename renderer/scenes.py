@@ -66,9 +66,9 @@ def validate_scene_connections(
         )
         if source_port is None or target_port is None:
             raise ValueError("Une connexion référence un port inconnu")
-        if source_port.direction != "output":
+        if source_port.direction not in ("output", "bidirectional"):
             raise ValueError(f"Le port source '{source_port.id}' doit être une sortie")
-        if target_port.direction != "input":
+        if target_port.direction not in ("input", "bidirectional"):
             raise ValueError(f"Le port cible '{target_port.id}' doit être une entrée")
         if source_port.signal != target_port.signal:
             raise ValueError(

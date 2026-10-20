@@ -46,5 +46,10 @@
       "stroke": "#475569",
       "stroke_width": 0.8
     }
+  },
+  "labels": {
+    "fill": "#7a7f87",
+    "font_family": "sans-serif",
+    "font_size_mm": 2.8
   }
 }
