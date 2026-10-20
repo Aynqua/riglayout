@@ -1,0 +1,55 @@
+{
+  "name": "Elektron Dark Pro",
+  "background": {
+    "fill": "#252525",
+    "stroke": "#1a1a1a",
+    "stroke_width": 1.5,
+    "rx": 6
+  },
+  "components": {
+    "frame": {
+      "fill": "#101010",
+      "stroke": "#2a2a2a",
+      "stroke_width": 1.0,
+      "rx": 2
+    },
+    "screen": {
+      "fill": "#0b131a",
+      "stroke": "#404b55",
+      "stroke_width": 1.0,
+      "rx": 2
+    },
+    "encoder": {
+      "fill": "#383838",
+      "stroke": "#555555",
+      "stroke_width": 1.2
+    },
+    "button": {
+      "fill": "#1e1e1e",
+      "stroke": "#444444",
+      "stroke_width": 1.0,
+      "rx": 1.5
+    },
+    "pad": {
+      "fill": "#1e1e1e",
+      "stroke": "#444444",
+      "stroke_width": 1.0,
+      "rx": 1.5
+    },
+    "led": {
+      "fill": "#df4d3e",
+      "stroke": "#802018",
+      "stroke_width": 0.5
+    },
+    "screw": {
+      "fill": "#121212",
+      "stroke": "#666666",
+      "stroke_width": 0.8
+    }
+  },
+  "labels": {
+    "fill": "#777777",
+    "font_family": "sans-serif",
+    "font_size_mm": 2.8
+  }
+}

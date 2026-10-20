@@ -1,0 +1,50 @@
+{
+  "name": "Dark Slate",
+  "background": {
+    "fill": "#1e2229",
+    "stroke": "#2c323b",
+    "stroke_width": 1.5,
+    "rx": 6
+  },
+  "components": {
+    "frame": {
+      "fill": "#15181d",
+      "stroke": "#262b33",
+      "stroke_width": 1.0,
+      "rx": 3
+    },
+    "screen": {
+      "fill": "#0f172a",
+      "stroke": "#334155",
+      "stroke_width": 1.2,
+      "rx": 2
+    },
+    "encoder": {
+      "fill": "#282e38",
+      "stroke": "#475569",
+      "stroke_width": 1.2
+    },
+    "button": {
+      "fill": "#232831",
+      "stroke": "#3b4252",
+      "stroke_width": 1.0,
+      "rx": 2
+    },
+    "pad": {
+      "fill": "#232831",
+      "stroke": "#3b4252",
+      "stroke_width": 1.0,
+      "rx": 2
+    },
+    "led": {
+      "fill": "#ef4444",
+      "stroke": "#991b1b",
+      "stroke_width": 0.5
+    },
+    "screw": {
+      "fill": "#111318",
+      "stroke": "#475569",
+      "stroke_width": 0.8
+    }
+  }
+}

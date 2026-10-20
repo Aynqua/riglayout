@@ -1,0 +1,50 @@
+{
+  "name": "Outlined Dark",
+  "background": {
+    "fill": "none",
+    "stroke": "#ffffff",
+    "stroke_width": 1.5,
+    "rx": 4
+  },
+  "components": {
+    "frame": {
+      "fill": "none",
+      "stroke": "#cccccc",
+      "stroke_width": 1.2,
+      "rx": 2
+    },
+    "screen": {
+      "fill": "none",
+      "stroke": "#ffffff",
+      "stroke_width": 1.2,
+      "rx": 2
+    },
+    "encoder": {
+      "fill": "none",
+      "stroke": "#ffffff",
+      "stroke_width": 1.2
+    },
+    "button": {
+      "fill": "none",
+      "stroke": "#cccccc",
+      "stroke_width": 1.0,
+      "rx": 2
+    },
+    "pad": {
+      "fill": "none",
+      "stroke": "#cccccc",
+      "stroke_width": 1.0,
+      "rx": 2
+    },
+    "led": {
+      "fill": "none",
+      "stroke": "#ffffff",
+      "stroke_width": 1.0
+    },
+    "screw": {
+      "fill": "none",
+      "stroke": "#888888",
+      "stroke_width": 0.8
+    }
+  }
+}

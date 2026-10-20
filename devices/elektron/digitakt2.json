@@ -1,0 +1,627 @@
+{
+  "manufacturer": "Elektron",
+  "model": "Digitakt II",
+  "physical": {
+    "width_mm": 215,
+    "height_mm": 176,
+    "depth_mm": 63
+  },
+  "components": [
+    {
+      "type": "frame",
+      "label": "Screen Frame",
+      "legend": "Digitakt II",
+      "legend_position": "bottom_left",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "x": 0.318,
+      "y": 0.270,
+      "width_mm": 73.5,
+      "height_mm": 51.2
+    },
+    {
+      "type": "logo",
+      "label": "Elektron",
+      "icon": "elektron",
+      "x": 0.922,
+      "y": 0.088,
+      "width_mm": 13.5,
+      "height_mm": 9.4
+    },
+    {
+      "type": "screen",
+      "label": "OLED Screen",
+      "x": 0.320,
+      "y": 0.261,
+      "width_mm": 60.1,
+      "height_mm": 33.5
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.054,
+      "y": 0.038,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.477,
+      "y": 0.038,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.953,
+      "y": 0.038,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.054,
+      "y": 0.966,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.477,
+      "y": 0.966,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.953,
+      "y": 0.966,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "encoder",
+      "label": "",
+      "x": 0.076,
+      "y": 0.187,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "",
+      "x": 0.076,
+      "y": 0.330,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "",
+      "x": 0.551,
+      "y": 0.187,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "",
+      "x": 0.675,
+      "y": 0.187,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "",
+      "x": 0.799,
+      "y": 0.187,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "",
+      "x": 0.924,
+      "y": 0.187,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "",
+      "x": 0.551,
+      "y": 0.330,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "",
+      "x": 0.675,
+      "y": 0.330,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "",
+      "x": 0.799,
+      "y": 0.330,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "",
+      "x": 0.924,
+      "y": 0.330,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "button",
+      "label": "FUNC",
+      "legend": "FUNC",
+      "fill": "#E0B329",
+      "stroke": "none",
+      "x": 0.097,
+      "y": 0.511,
+      "width_mm": 17.0,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Sup 1",
+      "icon": "perform",
+      "x": 0.206,
+      "y": 0.512,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Sup 2",
+      "icon": "save_project",
+      "x": 0.282,
+      "y": 0.512,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Sup 3",
+      "icon": "samples",
+      "x": 0.359,
+      "y": 0.512,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Sup 4",
+      "icon": "metronome",
+      "x": 0.435,
+      "y": 0.512,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "",
+      "icon": "keyboard",
+      "x": 0.096,
+      "y": 0.609,
+      "width_mm": 14.6,
+      "height_mm": 11.6
+    },
+    {
+      "type": "button",
+      "label": "",
+      "icon": "record",
+      "x": 0.224,
+      "y": 0.608,
+      "width_mm": 15.2,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Play",
+      "icon": "play",
+      "x": 0.323,
+      "y": 0.608,
+      "width_mm": 15.2,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Stop",
+      "icon": "stop",
+      "x": 0.422,
+      "y": 0.608,
+      "width_mm": 15.2,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "TRK",
+      "legend": "TRK",
+      "x": 0.097,
+      "y": 0.709,
+      "width_mm": 16.4,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "PTN",
+      "legend": "PTN",
+      "x": 0.097,
+      "y": 0.810,
+      "width_mm": 16.4,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "SONG",
+      "legend": "SONG",
+      "x": 0.097,
+      "y": 0.907,
+      "width_mm": 16.4,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "TRIG",
+      "legend": "TRIG",
+      "x": 0.551,
+      "y": 0.457,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "SRC",
+      "legend": "SRC",
+      "x": 0.625,
+      "y": 0.457,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "FLTR",
+      "legend": "FLTR",
+      "x": 0.698,
+      "y": 0.457,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "AMP",
+      "legend": "AMP",
+      "x": 0.772,
+      "y": 0.457,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "FX",
+      "legend": "FX",
+      "x": 0.846,
+      "y": 0.457,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "MOD",
+      "legend": "MOD",
+      "x": 0.919,
+      "y": 0.457,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Menu",
+      "legend": "YES",
+      "x": 0.551,
+      "y": 0.560,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Up",
+      "icon": "arrow_up",
+      "x": 0.698,
+      "y": 0.558,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "NO",
+      "legend": "NO",
+      "x": 0.551,
+      "y": 0.647,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Nav 2",
+      "icon": "arrow_left",
+      "x": 0.625,
+      "y": 0.647,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Nav 3",
+      "icon": "arrow_down",
+      "x": 0.698,
+      "y": 0.647,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Nav 4",
+      "icon": "arrow_right",
+      "x": 0.772,
+      "y": 0.647,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "PAGE",
+      "legend": "PAGE",
+      "x": 0.905,
+      "y": 0.647,
+      "width_mm": 16.4,
+      "height_mm": 11.0
+    },
+    {
+      "type": "led",
+      "label": "Voyant 1",
+      "x": 0.859,
+      "y": 0.537,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant 2",
+      "x": 0.888,
+      "y": 0.537,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant 3",
+      "x": 0.916,
+      "y": 0.537,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant 4",
+      "x": 0.944,
+      "y": 0.537,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant 5",
+      "x": 0.859,
+      "y": 0.572,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant 6",
+      "x": 0.888,
+      "y": 0.572,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant 7",
+      "x": 0.916,
+      "y": 0.572,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant 8",
+      "x": 0.944,
+      "y": 0.572,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "pad",
+      "label": "1",
+      "legend": "1",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.223,
+      "y": 0.767,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "2",
+      "legend": "2",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.320,
+      "y": 0.767,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "3",
+      "legend": "3",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.417,
+      "y": 0.767,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "4",
+      "legend": "4",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.514,
+      "y": 0.767,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "5",
+      "legend": "5",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.612,
+      "y": 0.767,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "6",
+      "legend": "6",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.709,
+      "y": 0.767,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "7",
+      "legend": "7",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.806,
+      "y": 0.767,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "8",
+      "legend": "8",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.903,
+      "y": 0.767,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "9",
+      "legend": "9",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.223,
+      "y": 0.895,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "10",
+      "legend": "10",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.320,
+      "y": 0.895,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "11",
+      "legend": "11",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.417,
+      "y": 0.895,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "12",
+      "legend": "12",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.514,
+      "y": 0.895,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "13",
+      "legend": "13",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.612,
+      "y": 0.895,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "14",
+      "legend": "14",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.709,
+      "y": 0.895,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "15",
+      "legend": "15",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.806,
+      "y": 0.895,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "16",
+      "legend": "16",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.903,
+      "y": 0.895,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    }
+  ]
+}
