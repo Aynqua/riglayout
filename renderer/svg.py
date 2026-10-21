@@ -341,20 +341,20 @@ def default_control_font_size(component, theme: Theme, device_model: str) -> flo
     if device_model.casefold() == "octatrack":
         if component.type == "pad":
             if component.width_mm <= 60:
-                return 12.5
-            return 16.0
+                return 11.0
+            return 14.0
         width = component.width_mm
         if width <= 18:
-            return 7.5
+            return 6.5
         if width <= 26:
-            return 9.5
+            return 8.2
         if width <= 36:
-            return 11.5
+            return 10.0
         if width <= 46:
-            return 13.0
+            return 11.5
         if width <= 65:
-            return 16.0
-        return 18.5
+            return 14.0
+        return 16.0
 
     max_font_size = min(
         component.width_mm * 0.88 / (max(len(component.legend or ""), 1) * 0.62),
