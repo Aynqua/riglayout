@@ -333,7 +333,37 @@ def add_control_icon(dwg, icon: str, center_x: float, center_y: float, width: fl
     ))
 
 
-def add_control_legend(dwg, component, theme: Theme, center_x: float, center_y: float):
+def default_control_font_size(component, theme: Theme, device_model: str) -> float:
+    explicit_font_size = component.legend_font_size_mm
+    if explicit_font_size is not None:
+        return explicit_font_size
+
+    if device_model.casefold() == "octatrack":
+        if component.type == "pad":
+            if component.width_mm <= 60:
+                return 12.5
+            return 16.0
+        width = component.width_mm
+        if width <= 18:
+            return 7.5
+        if width <= 26:
+            return 9.5
+        if width <= 36:
+            return 11.5
+        if width <= 46:
+            return 13.0
+        if width <= 65:
+            return 16.0
+        return 18.5
+
+    max_font_size = min(
+        component.width_mm * 0.88 / (max(len(component.legend or ""), 1) * 0.62),
+        component.height_mm * 0.55
+    )
+    return min(theme.labels.font_size_mm, max_font_size)
+
+
+def add_control_legend(dwg, component, theme: Theme, center_x: float, center_y: float, device_model: str = ""):
     legend = component.legend
     if component.type == "frame" and legend:
         color = component.legend_color or label_color(theme)
@@ -375,11 +405,7 @@ def add_control_legend(dwg, component, theme: Theme, center_x: float, center_y: 
     elif component.icon:
         add_control_icon(dwg, component.icon, center_x, center_y, component.width_mm, component.height_mm, color)
     elif legend:
-        max_font_size = min(
-            component.width_mm * 0.88 / (max(len(legend), 1) * 0.62),
-            component.height_mm * 0.55
-        )
-        font_size = min(component.legend_font_size_mm or theme.labels.font_size_mm, max_font_size)
+        font_size = default_control_font_size(component, theme, device_model)
         dwg.add(dwg.text(
             legend,
             insert=(center_x, center_y),
@@ -503,6 +529,6 @@ def render_svg(device: DeviceLayout, theme: Theme, output_path: str, show_labels
             ))
 
         if show_labels:
-            add_control_legend(dwg, comp, theme, cx, cy)
+            add_control_legend(dwg, comp, theme, cx, cy, device.model)
 
     dwg.save()
