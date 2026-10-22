@@ -7,6 +7,7 @@ from typing import Optional
 from renderer.models import DeviceLayout
 from renderer.themes import Theme
 from renderer.svg import render_svg
+from renderer.scenes import render_scene_svg  # Assurez-vous que votre fonction est bien dans renderer/scenes.py
 
 app = typer.Typer()
 THEMES_DIR = Path(__file__).resolve().parent / "themes"
@@ -51,6 +52,7 @@ def slugify(value: str) -> str:
     normalized = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
     return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", normalized.lower())).strip("-")
 
+
 @app.command()
 def render(
     device_path: Path = typer.Argument(..., help="Chemin du fichier JSON du device"),
@@ -59,6 +61,7 @@ def render(
     show_labels: bool = typer.Option(False, "--labels/--no-labels", help="Afficher les détails des commandes"),
     show_details: bool = typer.Option(False, "--detail", help="Afficher les légendes et symboles imprimés sur les commandes")
 ):
+    """Rendu d'un appareil unique au format SVG."""
     typer.echo(f"Chargement du device : {device_path}")
     with open(device_path, "r", encoding="utf-8") as f:
         device_data = json.load(f)
@@ -78,6 +81,41 @@ def render(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     render_svg(device, theme, str(output_path), show_labels=show_labels or show_details)
     typer.echo(f"✅ Fichier SVG généré avec succès : {output_path}")
+
+
+@app.command(name="render-scene")
+def render_scene(
+    scene_path: Path = typer.Argument(..., help="Chemin du fichier JSON de la scène"),
+    theme_option: Optional[str] = typer.Option(None, "--theme", "-t", help="Nom du thème ou chemin vers son fichier JSON"),
+    output_path: Optional[Path] = typer.Option(None, "--output", "-o", help="Chemin du fichier SVG de la scène généré"),
+    width: float = typer.Option(1200.0, "--width", "-w", help="Largeur de la scène en mm"),
+    height: float = typer.Option(800.0, "--height", "-h", help="Hauteur de la scène en mm")
+):
+    """Rendu d'une scène complète avec plusieurs appareils et câblage."""
+    typer.echo(f"Chargement de la scène : {scene_path}")
+
+    theme_path = select_theme(theme_option)
+    typer.echo(f"Chargement du thème : {theme_path}")
+    with open(theme_path, "r", encoding="utf-8") as f:
+        theme_data = json.load(f)
+    theme = Theme(**theme_data)
+
+    if output_path is None:
+        scene_name = slugify(scene_path.stem)
+        output_path = Path("output") / f"scene-{scene_name}.svg"
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Appel de la fonction de rendu de scène
+    render_scene_svg(
+        scene_path=str(scene_path),
+        output_path=str(output_path),
+        theme=theme,
+        scene_width_mm=width,
+        scene_height_mm=height
+    )
+    typer.echo(f"✅ Scène SVG générée avec succès : {output_path}")
+
 
 if __name__ == "__main__":
     app()

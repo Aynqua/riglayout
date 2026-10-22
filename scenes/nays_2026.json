@@ -1,0 +1,29 @@
+{
+    "name": "Live Rig",
+    "devices": [
+        {
+            "id": "my_digitakt",
+            "device": "devices/elektron/digitakt2.json",
+            "x": 0.3,
+            "y": 0.5
+        },
+        {
+            "id": "my_octatrack",
+            "device": "devices/elektron/octatrack.json",
+            "x": 0.7,
+            "y": 0.5
+        }
+    ],
+    "connections": [
+        {
+            "source": {
+                "device_id": "my_digitakt",
+                "port_id": "midi-out"
+            },
+            "target": {
+                "device_id": "my_octatrack",
+                "port_id": "midi-in"
+            }
+        }
+    ]
+}

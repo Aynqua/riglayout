@@ -634,7 +634,9 @@
       "signal": "audio",
       "connector": "6.35mm TRS jack",
       "channels": 1,
-      "balanced": true
+      "balanced": true,
+      "x": 0.08,
+      "y": 0.0
     },
     {
       "id": "audio-out-r",
@@ -643,7 +645,9 @@
       "signal": "audio",
       "connector": "6.35mm TRS jack",
       "channels": 1,
-      "balanced": true
+      "balanced": true,
+      "x": 0.17,
+      "y": 0.0
     },
     {
       "id": "audio-in-l",
@@ -652,7 +656,9 @@
       "signal": "audio",
       "connector": "6.35mm TRS jack",
       "channels": 1,
-      "balanced": true
+      "balanced": false,
+      "x": 0.28,
+      "y": 0.0
     },
     {
       "id": "audio-in-r",
@@ -661,7 +667,9 @@
       "signal": "audio",
       "connector": "6.35mm TRS jack",
       "channels": 1,
-      "balanced": true
+      "balanced": false,
+      "x": 0.37,
+      "y": 0.0
     },
     {
       "id": "headphones",
@@ -670,21 +678,18 @@
       "signal": "audio",
       "connector": "6.35mm TRS stereo jack",
       "channels": 2,
-      "balanced": false
-    },
-    {
-      "id": "midi-in",
-      "label": "MIDI In",
-      "direction": "input",
-      "signal": "midi",
-      "connector": "5-pin DIN"
+      "balanced": false,
+      "x": 0.48,
+      "y": 0.0
     },
     {
       "id": "midi-out",
       "label": "MIDI Out",
       "direction": "output",
       "signal": "midi",
-      "connector": "5-pin DIN"
+      "connector": "5-pin DIN",
+      "x": 0.60,
+      "y": 0.0
     },
     {
       "id": "midi-thru-sync-out",
@@ -692,7 +697,18 @@
       "direction": "output",
       "signal": "midi",
       "connector": "5-pin DIN",
-      "capabilities": ["midi_thru", "din_sync"]
+      "capabilities": ["midi_thru", "din_sync"],
+      "x": 0.68,
+      "y": 0.0
+    },
+    {
+      "id": "midi-in",
+      "label": "MIDI In",
+      "direction": "input",
+      "signal": "midi",
+      "connector": "5-pin DIN",
+      "x": 0.76,
+      "y": 0.0
     },
     {
       "id": "usb",
@@ -700,7 +716,9 @@
       "direction": "bidirectional",
       "signal": "usb",
       "connector": "USB-B",
-      "capabilities": ["high_speed", "audio", "midi", "overbridge"]
+      "capabilities": ["high_speed", "audio", "midi", "overbridge"],
+      "x": 0.87,
+      "y": 0.0
     },
     {
       "id": "power-in",
@@ -708,7 +726,9 @@
       "direction": "input",
       "signal": "power",
       "connector": "DC barrel jack",
-      "voltage_v": 12
+      "voltage_v": 12,
+      "x": 0.95,
+      "y": 0.0
     }
   ]
 }

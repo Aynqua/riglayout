@@ -58,3 +58,6 @@ Le module `renderer.scenes` définit les instances d'appareils positionnées dan
 ```
 
 Après chargement des layouts référencés, `validate_scene_connections(scene, layouts_by_instance)` vérifie que les appareils et ports existent, que la source est une sortie, la cible une entrée, et que les deux ports utilisent le même type de signal. La scène est modélisée et validable; son rendu multi-appareils pourra être ajouté sans modifier les layouts individuels.
+
+
+python cli.py render-scene .\scenes\nays_2026.json --width 1400 --height 900
