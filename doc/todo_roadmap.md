@@ -5,6 +5,7 @@
 ## État actuel
 
 **Fait** :
+- variantes de mise en page `scenes/nays_2026_{bloc,carre,portrait,bandeau,colonne}.json`, choisies en explorant toutes les permutations par famille (score = 300 × croisements + longueur de câble) ; les tests de câblage tournent sur toutes les scènes du dossier ;
 - logos Roland : emblème (tracé fourni par l'utilisateur, plein) + mot officiel (Wikimedia, liste de paths) ; textes trop petits en `detail_only` (« POLYPHONIC SYNTHESIZER », « TOUCH BASSLINE ») ;
 - scène `nays_2026` : rangée du haut alignée (TB-3 `relative` à droite du JX-08, 30 mm au-dessus de la rangée du bas) ;
 - modèle appareil + thèmes, rendu SVG d'un appareil, Digitakt II détaillé, Octatrack (`octatrack2.json`), légendes/icônes (designs en **v0**, à peaufiner en fin de projet) ;

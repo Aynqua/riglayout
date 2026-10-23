@@ -118,8 +118,11 @@ def test_port_side_detection(x, y, expected):
     assert port_side(DevicePort(**port("p", "input", x=x, y=y))) == expected
 
 
-def test_project_scene_cabling():
-    scene_path = ROOT / "scenes" / "nays_2026.json"
+SCENE_PATHS = sorted((ROOT / "scenes").glob("*.json"))
+
+
+@pytest.mark.parametrize("scene_path", SCENE_PATHS, ids=lambda p: p.stem)
+def test_project_scene_cabling(scene_path):
     scene = load_scene(scene_path)
     layouts = load_scene_layouts(scene, scene_path.parent)
     routes, rects = route(scene, layouts)
@@ -226,8 +229,8 @@ def test_parallel_lanes_keep_clearance():
     assert_lanes_keep_clearance(routes, rects)
 
 
-def test_project_scene_lanes_keep_clearance():
-    scene_path = ROOT / "scenes" / "nays_2026.json"
+@pytest.mark.parametrize("scene_path", SCENE_PATHS, ids=lambda p: p.stem)
+def test_project_scene_lanes_keep_clearance(scene_path):
     scene = load_scene(scene_path)
     layouts = load_scene_layouts(scene, scene_path.parent)
     routes, rects = route(scene, layouts)

@@ -70,5 +70,5 @@ Les appareils définissent aussi leurs ports (`direction`, `signal`, position `x
 | --- | --- |
 | `devices/` | Layouts : Elektron Digitakt II, Octatrack ; Roland JX-08, TB-3 |
 | `themes/` | `dark_slate`, `flat` (Elektron Dark Pro), `outlined_dark`, `outlined_light` |
-| `scenes/` | `nays_2026` |
+| `scenes/` | `nays_2026` et ses variantes de mise en page : `_bloc` (affiche paysage), `_carre` (t-shirt), `_portrait`, `_bandeau` (panoramique), `_colonne` (verticale) |
 | `output/` | SVG et PNG générés |
