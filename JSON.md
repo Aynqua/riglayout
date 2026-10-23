@@ -141,6 +141,35 @@ Un thème contient `name`, `background` et `components`. `components` associe un
 
 Les pads utilisent le style `pad` du thème. Pour qu'ils aient le même aspect que les boutons, donne à `pad` les mêmes valeurs que `button`.
 
+`cables` (facultatif) règle les câbles des scènes. Tous les champs ont une valeur par défaut, y compris chaque couleur prise séparément.
+
+```json
+{
+  "cables": {
+    "width_mm": 1.2,
+    "spacing_mm": 2.2,
+    "clearance_mm": 6.0,
+    "corner_radius_mm": 1.5,
+    "opacity": 0.95,
+    "colors": {
+      "audio": "#3b82f6",
+      "midi": "#f59e0b",
+      "usb": "#a855f7",
+      "power": "#ef4444"
+    }
+  }
+}
+```
+
+| Champ | Rôle |
+| --- | --- |
+| `width_mm` | Épaisseur d'un câble |
+| `spacing_mm` | Distance d'axe à axe entre deux câbles parallèles; doit être au moins égale à `width_mm` |
+| `clearance_mm` | Distance minimale entre un câble et un appareil |
+| `corner_radius_mm` | Rayon des coudes (`0` pour des angles vifs) |
+| `opacity` | Opacité des câbles, entre `0` et `1` |
+| `colors` | Couleur par type de signal : `audio`, `midi`, `usb`, `power` |
+
 ## Scènes
 
 Une scène positionne des instances de layouts et relie leurs ports. `device` est le chemin du JSON de layout, relatif au dossier depuis lequel la commande est lancée; `id` identifie une instance dans la scène.
@@ -174,8 +203,29 @@ Une scène positionne des instances de layouts et relie leurs ports. `device` es
 - `absolute` : `x` et `y` en **millimètres**, coin supérieur gauche de l'appareil. Les valeurs négatives sont permises.
 - `relative` : place l'appareil à côté de `target` (un autre `id` de la scène) selon `anchor` (`right` par défaut, `left`, `top`, `bottom`), avec un écart `spacing_mm` (15 par défaut). Les dépendances peuvent s'enchaîner; une dépendance circulaire ou une cible inconnue lève une erreur.
 
-La taille du SVG est calculée automatiquement à partir de l'encombrement des appareils, avec une marge de 80 mm.
+Deux appareils ne peuvent pas se superposer : le rendu s'arrête avec une erreur qui nomme les deux appareils. Ils peuvent se toucher.
+
+La taille du SVG est calculée automatiquement à partir de l'encombrement des appareils et des câbles, avec une marge de 20 mm.
 
 ### Connexions
 
-À la lecture, `validate_scene_connections(scene, layouts_by_instance)` vérifie les appareils, les ports, le sens (source `output` ou `bidirectional`, cible `input` ou `bidirectional`) et que les deux ports ont le même `signal`. Les câbles partent des positions `x`/`y` des ports et sont tracés à angle droit au-dessus de l'appareil source, sur des pistes décalées pour éviter les superpositions. `label` est facultatif et n'est pas encore rendu.
+Une connexion relie un port source à un port cible. Le rendu vérifie :
+
+- que les appareils et les ports existent ;
+- le sens : source `output` ou `bidirectional`, cible `input` ou `bidirectional` ;
+- que les deux ports ont le même `signal` ;
+- qu'un port n'est utilisé que par un seul câble, et que deux câbles ne se branchent pas au même endroit (deux ports déclarés à la même position).
+
+`label` est facultatif et n'est pas encore rendu.
+
+### Câblage
+
+Le câblage reproduit un branchement réel :
+
+- un câble se branche sur la **tranche** de l'appareil, au bord le plus proche de la position `x`/`y` du port (`y = 0` → bord supérieur, `y = 1` → bord inférieur, `x = 0` → gauche, `x = 1` → droite), et en sort perpendiculairement ;
+- il ne passe **jamais au-dessus d'un appareil** : il le contourne en restant à `clearance_mm` de ses bords. Si un port est trop proche d'un autre appareil pour y brancher un câble, le rendu s'arrête avec une erreur ;
+- le trajet est à angles droits et cherche le plus court chemin avec le moins de coudes ;
+- les câbles qui suivent le même chemin sont **côte à côte**, espacés de `spacing_mm`, dans un ordre qui limite les croisements ;
+- la couleur dépend du `signal` des ports et vient du thème.
+
+`--detail` affiche aussi les légendes des appareils dans une scène.

@@ -38,7 +38,9 @@ python cli.py render-scene scenes/nays_2026.json --theme flat
 python cli.py render-scene scenes/nays_2026.json --theme flat --detail --output output/rig.svg
 ```
 
-Une scène place plusieurs appareils (positions absolues en mm ou relatives à un autre appareil) et trace les câbles MIDI et audio entre leurs ports. La taille du SVG est calculée automatiquement. Sans `--output`, le fichier est écrit dans `output/scene-<nom du fichier>.svg`.
+Une scène place plusieurs appareils (positions absolues en mm ou relatives à un autre appareil) et trace les câbles entre leurs ports comme dans la réalité : les câbles partent de la tranche des machines, en font le tour sans jamais passer dessus, et sont posés côte à côte quand ils suivent le même chemin. Leur couleur dépend du signal (audio, MIDI, USB, alimentation) et se règle dans le thème. Des appareils qui se superposent, un port utilisé deux fois ou un câble impossible à brancher arrêtent le rendu avec un message explicite.
+
+La taille du SVG est calculée automatiquement. Sans `--output`, le fichier est écrit dans `output/scene-<nom du fichier>.svg`.
 
 ## Modèle des appareils
 

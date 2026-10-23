@@ -795,7 +795,7 @@
       "direction": "input",
       "signal": "audio",
       "connector": "6.35mm jack",
-      "x": 0.26,
+      "x": 0.29,
       "y": 0.00
     },
     {
@@ -804,7 +804,7 @@
       "direction": "input",
       "signal": "audio",
       "connector": "6.35mm jack",
-      "x": 0.21,
+      "x": 0.20,
       "y": 0.0
     },
     {
@@ -813,7 +813,7 @@
       "direction": "input",
       "signal": "audio",
       "connector": "6.35mm jack",
-      "x": 0.21,
+      "x": 0.23,
       "y": 0.00
     },
     {
@@ -822,7 +822,7 @@
       "direction": "output",
       "signal": "audio",
       "connector": "6.35mm jack",
-      "x": 0.16,
+      "x": 0.14,
       "y": 0.0
     },
     {
@@ -831,7 +831,7 @@
       "direction": "output",
       "signal": "audio",
       "connector": "6.35mm jack",
-      "x": 0.16,
+      "x": 0.17,
       "y": 0.00
     },
     {
@@ -840,7 +840,7 @@
       "direction": "output",
       "signal": "audio",
       "connector": "6.35mm jack",
-      "x": 0.11,
+      "x": 0.08,
       "y": 0.0
     },
     {

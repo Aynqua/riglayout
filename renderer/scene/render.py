@@ -1,4 +1,4 @@
-"""Rendu d'une scène : chargement, validation, placement, dessin des appareils puis des câbles."""
+"""Rendu d'une scène : chargement, validation, placement, câblage, puis dessin des appareils et des câbles."""
 import json
 from typing import Dict
 
@@ -9,11 +9,12 @@ from renderer.models.device import DeviceLayout
 from renderer.models.scene import Scene
 from renderer.models.theme import Theme
 from renderer.device.draw import draw_device_to_group
-from renderer.scene.cables import PortKey, Point, draw_cables
-from renderer.scene.layout import compute_bounds, resolve_positions
+from renderer.scene.cabling import draw_cables, route_cables
+from renderer.scene.layout import check_no_overlap, compute_bounds, resolve_positions
 from renderer.scene.validation import validate_scene_connections
 
 SCENE_BACKGROUND = "#111111"
+SCENE_PADDING_MM = 20.0
 
 
 def load_scene(scene_path: str) -> Scene:
@@ -34,7 +35,7 @@ def render_scene_svg(
     scene_path: str,
     output_path: str,
     theme: Theme,
-    padding_mm: float = 80.0,
+    padding_mm: float = SCENE_PADDING_MM,
     show_labels: bool = False
 ):
     scene = load_scene(scene_path)
@@ -45,7 +46,9 @@ def render_scene_svg(
     validate_scene_connections(scene, layouts_by_instance)
 
     resolved_rects = resolve_positions(scene, layouts_by_instance)
-    bounds = compute_bounds(resolved_rects, padding_mm)
+    check_no_overlap(resolved_rects)
+    routes = route_cables(scene, layouts_by_instance, resolved_rects, theme.cables)
+    bounds = compute_bounds(resolved_rects, padding_mm, (point for route in routes for point in route.points))
 
     dwg = svgwrite.Drawing(
         output_path,
@@ -54,16 +57,13 @@ def render_scene_svg(
     )
     dwg.add(Rect(insert=(0, 0), size=(bounds.width_mm, bounds.height_mm), fill=SCENE_BACKGROUND))
 
-    port_coordinates: Dict[PortKey, Point] = {}
+    # Tout le contenu est dessiné en coordonnées de scène dans un groupe décalé.
+    content = dwg.g(transform=f"translate({bounds.offset_x} {bounds.offset_y})")
     for dev_ref in scene.devices:
         layout = layouts_by_instance[dev_ref.id]
-        rx, ry, dev_w, dev_h = resolved_rects[dev_ref.id]
-        final_x = rx + bounds.offset_x
-        final_y = ry + bounds.offset_y
+        x, y, dev_w, dev_h = resolved_rects[dev_ref.id]
 
-        device_group = dwg.g(transform=f"translate({final_x} {final_y})")
-
-        # Fond de l'appareil (basé sur le thème)
+        device_group = dwg.g(transform=f"translate({x} {y})", class_="device", id=f"device-{dev_ref.id}")
         bg_style = theme.background
         device_group.add(Rect(
             insert=(0, 0),
@@ -74,13 +74,10 @@ def render_scene_svg(
             stroke_width=bg_style.get("stroke_width", 1.5)
         ))
         draw_device_to_group(device_group, layout, theme, show_labels=show_labels)
-        dwg.add(device_group)
+        content.add(device_group)
 
-        # Coordonnées absolues (SVG) des ports, points d'ancrage des câbles
-        for port in layout.ports:
-            port_coordinates[(dev_ref.id, port.id)] = (final_x + (port.x * dev_w), final_y + (port.y * dev_h))
-
-    draw_cables(dwg, scene.connections, port_coordinates, resolved_rects)
+    draw_cables(content, routes, theme.cables)
+    dwg.add(content)
 
     dwg.save()
     print(f"Scène rendue avec succès dans : {output_path} (Taille auto : {bounds.width_mm:.1f}x{bounds.height_mm:.1f} mm)")

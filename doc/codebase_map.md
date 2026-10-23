@@ -12,10 +12,15 @@
 | Légendes : couleur, taille, position du texte | `renderer/device/legends.py` |
 | Forme d'un composant | `renderer/device/draw.py` |
 | Format d'une scène (positions, connexions) | `renderer/models/scene.py` |
-| Règles de connexion (sens, signal) | `renderer/scene/validation.py` |
-| Placement des appareils, taille de la scène | `renderer/scene/layout.py` |
-| Tracé / couleur des câbles | `renderer/scene/cables.py` |
-| Orchestration du rendu de scène, fond, ports | `renderer/scene/render.py` |
+| Règles de connexion (sens, signal, port unique) | `renderer/scene/validation.py` |
+| Placement des appareils, chevauchements, taille de la scène | `renderer/scene/layout.py` |
+| Où un câble se branche sur une machine | `renderer/scene/cabling/anchors.py` |
+| Couloirs autorisés autour des machines | `renderer/scene/cabling/grid.py` |
+| Choix du trajet (longueur, coudes) | `renderer/scene/cabling/router.py` |
+| Écartement des câbles parallèles, ordre des voies | `renderer/scene/cabling/nudging.py` |
+| Aspect SVG d'un câble (coudes, prises) | `renderer/scene/cabling/draw.py` |
+| Couleurs / épaisseur / espacement des câbles | `themes/*.json` → bloc `cables` (`CableStyle` dans `models/theme.py`) |
+| Orchestration du rendu de scène, fond | `renderer/scene/render.py` |
 | Options CLI | `cli.py` |
 
 Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` ← `scene` ← `cli`.
@@ -50,7 +55,9 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 ### `models/theme.py`
 - `ComponentStyle` : `fill` (requis), `stroke="none"`, `stroke_width=0`, `rx=0`, `indicator_color` (inutilisé).
 - `LabelStyle` : `fill=None` (→ couleur auto), `font_family="sans-serif"`, `font_size_mm=2.5`.
-- `Theme` : `name`, `background: Dict[str, Any]` (clés lues : `fill`, `stroke`, `stroke_width`, `rx`), `components: Dict[type, ComponentStyle]`, `labels`.
+- `CableColors` : `audio`, `midi`, `usb`, `power` (chacune avec défaut → surcharge partielle possible).
+- `CableStyle` : `width_mm=1.2`, `spacing_mm=2.2` (validator : ≥ `width_mm`), `clearance_mm=6`, `corner_radius_mm=1.5`, `opacity=0.95`, `colors`.
+- `Theme` : `name`, `background: Dict[str, Any]` (clés lues : `fill`, `stroke`, `stroke_width`, `rx`), `components: Dict[type, ComponentStyle]`, `labels`, `cables: CableStyle` (défaut si absent).
 
 ### `models/scene.py`
 `AbsolutePosition(type="absolute", x, y)` (mm), `RelativePosition(type="relative", anchor right|left|top|bottom, target, spacing_mm=15)`, `SceneDevice(id, device: chemin, position)`, `PortEndpoint(device_id, port_id)`, `SceneConnection(source, target, label?)`, `Scene(name, devices=[], connections=[])`.
@@ -90,30 +97,44 @@ Ajouter une icône : écrire `draw_xxx`, l'enregistrer dans `ICONS`, la lister d
 `__init__.py` réexporte `render_scene_svg`, `validate_scene_connections`.
 
 ### `scene/validation.py`
-`validate_scene_connections(scene, layouts_by_instance)` : ids d'instance uniques, layout présent, ids de port uniques par appareil, appareils/ports référencés existants, source ∈ {output, bidirectional}, cible ∈ {input, bidirectional}, **même `signal`**. Lève `ValueError` (messages FR).
+`validate_scene_connections(scene, layouts_by_instance)` : ids d'instance uniques, layout présent, ids de port uniques par appareil, **chaque port utilisé par au plus un câble**, appareils/ports référencés existants, source ∈ {output, bidirectional}, cible ∈ {input, bidirectional}, **même `signal`**. Lève `ValueError` (messages FR).
 
 ### `scene/layout.py`
 | Symbole | Rôle |
 |---|---|
 | `Rect` | alias `(x, y, w, h)` en mm, coordonnées de scène |
 | `resolve_positions(scene, layouts) -> Dict[id, Rect]` | Absolues puis relatives en cascade (≤ `MAX_RESOLUTION_PASSES`=10 passes) ; aucun progrès → `ValueError` « dépendance circulaire » |
+| `check_no_overlap(rects)` | `ValueError` si deux appareils ont une intersection d'aire non nulle (se toucher est permis) |
 | `SceneBounds(width_mm, height_mm, offset_x, offset_y)` | NamedTuple |
-| `compute_bounds(rects, padding_mm)` | bbox + marge ; offset = translation scène → SVG |
+| `compute_bounds(rects, padding_mm, points=())` | bbox des appareils **et des points des câbles** + marge ; offset = translation scène → SVG |
 
-### `scene/cables.py`
-| Symbole | Rôle |
+### `scene/cabling/` — Câblage réaliste
+
+Pipeline (`__init__.route_cables`) : ancrage des ports → contrôle des prises → grille → A* par câble → séparation (nudging) → contrôle anti-traversée. Tout en **coordonnées de scène** (le décalage SVG est appliqué par un `<g translate>` dans `render.py`).
+
+| Fichier / symbole | Rôle |
 |---|---|
-| `STUB_LENGTH_MM=8`, `TRAY_OFFSET_MM=12`, `TRAY_SPACING_MM=3.5`, `CABLE_WIDTH_MM=2.5` | Constantes de routage |
-| `cable_color(conn)` | `#e67e22` si `"midi"` dans **l'id du port source**, sinon `#3498db` |
-| `cable_path(start, end, tray_y)` | Path orthogonal : stub → piste → horizontal → descente |
-| `draw_cables(dwg, connections, port_coordinates, resolved_rects)` | Piste i = `top_source − 12 − i·3.5` (⚠ `top_source` en coordonnées de scène **non décalées**, alors que les ports sont en coordonnées SVG). `opacity=0.9` (utilisé par les tests pour repérer les câbles) |
+| `__init__.CableRoute(connection, signal, points)` | Résultat : polyligne orthogonale port source → port cible |
+| `__init__.route_cables(scene, layouts, rects, style)` | Pipeline complet. Erreurs : prises à la même position (`_check_distinct_plugs`), port trop près d'un autre appareil (sortie dans une zone interdite), aucun chemin, câble qui traverserait un appareil (`_check_no_device_crossing`, garde-fou) |
+| `__init__.draw_cables(container, routes, style)` | Couleur = `style.colors.<signal du port source>` |
+| `geometry.py` | `Point`, `Direction` (`UP/DOWN/LEFT/RIGHT`, y vers le bas), `Box` (`from_rect`, `inflate`, `contains_strict`, `overlaps`), `segment_crosses_box`, `simplify` (supprime doublons + points alignés), `EPS` |
+| `anchors.port_side(port)` | Bord le plus proche de (x, y) normalisés ; égalité : haut > bas > gauche > droite |
+| `anchors.port_anchor(port, box, clearance) -> PortAnchor(point, direction, exit)` | Port projeté sur la tranche ; `exit` = point à `clearance` du bord, départ du routage |
+| `grid.RoutingGrid(obstacles, waypoints, frame_margin)` | Lignes = bords des boîtes gonflées de `clearance`, milieux entre lignes d'obstacles (couloirs centrés), points de sortie, cadre extérieur. `is_free(node)`, `step(node, dir)` (None si l'arête entre dans une zone interdite), `blocking_obstacle(point)` ; caches par instance |
+| `router.find_route(grid, start, start_dir, goal, goal_dir)` | A* sur états (nœud, direction) ; coût = longueur + `BEND_PENALTY_MM` (12) par coude, pas de demi-tour ; arrivée pénalisée si pas dans l'axe du port |
+| `nudging.nudge_routes(routes, boxes, spacing, width)` | Segments colinéaires qui se recouvrent → voies parallèles. Premier/dernier segment (sortie de port) **fixes**. Ordre des voies : `_Ordering.compare` (celui qui quitte le couloir le premier se place du côté où il tourne ; à coude identique, regarde le couloir suivant avec inversion d'ordre pour (lo,-1) et (hi,+1)). Place disponible mesurée jusqu'aux appareils (`_free_space`) ; espacement compressé si nécessaire (`_lane_offsets`). Coudes recalculés par intersection (`_rebuild`) |
+| `draw.rounded_path(points, radius)` | Path SVG avec coudes arrondis (`Q`) |
+| `draw.draw_cable(container, points, color, signal, style)` | `<g class="cable cable-<signal>">` : tracé + pastille de prise à chaque bout |
 
 ### `scene/render.py`
 | Symbole | Rôle |
 |---|---|
 | `SCENE_BACKGROUND = "#111111"` | Fond de scène (ne dépend pas du thème) |
+| `SCENE_PADDING_MM = 20` | Marge autour de la scène |
 | `load_scene(path)`, `load_scene_layouts(scene)` | Chargement JSON ; chemins `device` relatifs au **CWD** |
-| `render_scene_svg(scene_path, output_path, theme, padding_mm=80, show_labels=False)` | load → scène vide = `ValueError` → validate → resolve_positions → compute_bounds → fond → par appareil `<g translate>` + rect fond thème (rx défaut 6) + `draw_device_to_group` + coordonnées des ports → `draw_cables` → `save()` + `print` taille |
+| `render_scene_svg(scene_path, output_path, theme, padding_mm=20, show_labels=False)` | load → scène vide = `ValueError` → validate → resolve_positions → check_no_overlap → route_cables → compute_bounds → fond → `<g translate(offset)>` contenant les appareils (`<g class="device" id="device-<id>">`) puis les câbles → `save()` + `print` taille |
+
+`cli.py render-scene` attrape les `ValueError` (dont `ValidationError` pydantic) → message `❌ Scène invalide : …` et code de sortie 1.
 
 ## `tests/` — pytest (`./venv/bin/python.exe -m pytest`)
 
@@ -125,7 +146,8 @@ Indépendants du design des vrais appareils : pas de comparaison de SVG figés.
 | `test_models.py` | Défauts, validations, enums fermés ; tous les `devices/` et `themes/` du projet se chargent |
 | `test_scene_validation.py` | Connexions valides / invalides, doublons |
 | `test_scene_layout.py` | Ancres relatives, cascade, cycles, bbox |
-| `test_render.py` | Chaque icône dessine, icône inconnue, rendu complet × thèmes, légendes seulement en `--detail`, vrais appareils rendent sans erreur, scène (taille, 1 câble par connexion, couleurs) |
+| `test_render.py` | Chaque icône dessine, icône inconnue, rendu complet × thèmes, légendes seulement en `--detail`, vrais appareils rendent sans erreur, scène (taille, 1 câble par connexion, couleurs du thème), `--detail` en scène |
+| `test_cabling.py` | `assert_cabling_is_realistic` (orthogonal, ne traverse aucun appareil, sort perpendiculairement au port, aucun couple de segments parallèles à moins de `spacing_mm`) sur : câbles parallèles, mur à contourner, ports sur les 4 côtés, scène `nays_2026`. Erreurs : chevauchement, port utilisé 2×, prises à la même position, port bloqué. Thème `cables` |
 | `test_cli.py` | `slugify`, `select_theme` |
 
 ## Données

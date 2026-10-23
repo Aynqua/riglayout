@@ -20,6 +20,17 @@ def validate_scene_connections(
         if len(port_ids) != len(set(port_ids)):
             raise ValueError(f"Les identifiants de ports doivent être uniques pour '{instance_id}'")
 
+    used_ports = set()
+    for connection in scene.connections:
+        for endpoint in (connection.source, connection.target):
+            key = (endpoint.device_id, endpoint.port_id)
+            if key in used_ports:
+                raise ValueError(
+                    f"Le port '{endpoint.port_id}' de '{endpoint.device_id}' est utilisé par plusieurs câbles :"
+                    " une prise ne reçoit qu'un seul câble"
+                )
+            used_ports.add(key)
+
     for connection in scene.connections:
         if (
             connection.source.device_id not in instance_ids

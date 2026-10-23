@@ -105,13 +105,16 @@ def render_scene(
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Appel de la fonction avec show_labels
-    render_scene_svg(
-        scene_path=str(scene_path),
-        output_path=str(output_path),
-        theme=theme,
-        show_labels=show_labels or show_details
-    )
+    try:
+        render_scene_svg(
+            scene_path=str(scene_path),
+            output_path=str(output_path),
+            theme=theme,
+            show_labels=show_labels or show_details
+        )
+    except ValueError as error:  # inclut les ValidationError pydantic
+        typer.secho(f"❌ Scène invalide : {error}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
     typer.echo(f"✅ Scène SVG générée avec succès : {output_path}")
 
 if __name__ == "__main__":

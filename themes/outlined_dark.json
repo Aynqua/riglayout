@@ -46,5 +46,18 @@
       "stroke": "#888888",
       "stroke_width": 0.8
     }
+  },
+  "cables": {
+    "width_mm": 1.2,
+    "spacing_mm": 2.2,
+    "clearance_mm": 6.0,
+    "corner_radius_mm": 1.5,
+    "opacity": 0.95,
+    "colors": {
+      "audio": "#3b82f6",
+      "midi": "#f59e0b",
+      "usb": "#a855f7",
+      "power": "#ef4444"
+    }
   }
 }

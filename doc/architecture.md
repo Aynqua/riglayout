@@ -32,7 +32,7 @@ renderer/
   __init__.py          vide
   models/              Modèles pydantic, aucune dépendance au rendu
     device.py          DeviceLayout, composants, ports
-    theme.py           Theme, ComponentStyle, LabelStyle
+    theme.py           Theme, ComponentStyle, LabelStyle, CableStyle
     scene.py           Scene, positions, connexions
   device/              Rendu d'un appareil
     draw.py            draw_device_to_group (moteur partagé), render_svg
@@ -40,9 +40,16 @@ renderer/
     icons.py           Registre ICONS des pictogrammes + icônes custom par path SVG
   scene/               Rendu de scène
     validation.py      validate_scene_connections
-    layout.py          Positions absolues/relatives, encombrement
-    cables.py          Routage et couleur des câbles
+    layout.py          Positions absolues/relatives, chevauchements, encombrement
     render.py          Orchestration render_scene_svg
+    cabling/           Câblage réaliste (sans lib externe)
+      __init__.py      route_cables (pipeline + contrôles), draw_cables, CableRoute
+      geometry.py      Point, Direction, Box, primitives orthogonales
+      anchors.py       Bord et point de branchement d'un port
+      grid.py          Grille de couloirs autour des machines
+      router.py        A* longueur + coudes
+      nudging.py       Câbles parallèles côte à côte
+      draw.py          Tracé SVG (coudes arrondis, prises)
 tests/                 pytest, indépendants du design des vrais appareils
 devices/<marque>/*.json   Layouts d'appareils (données)
   elektron/digitakt2.json   Digitakt II (215×176 mm, ~68 composants, 10 ports)
@@ -78,11 +85,18 @@ render_svg(device, theme, out, show_labels)
 render.load_scene / load_scene_layouts    (chemins device relatifs au CWD, pas au fichier scène)
 validation.validate_scene_connections
 layout.resolve_positions                  (absolute | relative en cascade, max 10 passes)
-layout.compute_bounds                     (bbox + padding_mm 80 → taille SVG + offset)
-render : par appareil <g translate> + Rect fond thème + device.draw_device_to_group
-         + coordonnées absolues des ports (port.x/y normalisés sur l'appareil)
-cables.draw_cables                        (tracé orthogonal "goulotte" au-dessus de l'appareil source)
+layout.check_no_overlap                   (erreur si deux machines se superposent)
+cabling.route_cables                      (coordonnées de scène)
+   anchors : port projeté sur la tranche, sortie perpendiculaire, point de sortie à clearance_mm
+   grid    : couloirs autour des machines gonflées de clearance_mm
+   router  : A* par câble (longueur + pénalité de coude)
+   nudging : câbles colinéaires → voies parallèles espacées de spacing_mm
+   contrôle : aucun segment ne traverse une machine
+layout.compute_bounds                     (bbox appareils + câbles + padding 20 → taille SVG + offset)
+render : <g translate(offset)> { appareils (<g translate> + fond + draw_device_to_group), câbles }
 ```
+
+Le câblage est entièrement dans `scene/cabling/` et ne connaît pas svgwrite sauf `draw.py`. Les réglages visuels et la distance aux machines viennent du bloc `cables` du thème.
 
 Dépendances entre paquets à sens unique : `models` ← `device` ← `scene` ← `cli`. Un module de `models/` n'importe jamais `device/` ou `scene/`.
 
@@ -91,6 +105,7 @@ Dépendances entre paquets à sens unique : `models` ← `device` ← `scene` �
 - **Toutes les tailles en millimètres**; le SVG a `viewBox="0 0 W H"` en mm → 1 unité = 1 mm.
 - `x`, `y` des composants **et des ports** : normalisés `[0,1]` sur l'appareil, **centre** du composant. Origine en haut à gauche. Port `y=0.0` = bord haut (face arrière vue de dessus), défaut `y=1.0`.
 - Scène : `AbsolutePosition.x/y` en **mm**, coin **haut-gauche** de l'appareil, valeurs négatives permises (la bbox est recalée). `RelativePosition` : collé à `target` sur `anchor` avec `spacing_mm`.
+- Câblage : coordonnées de scène, y vers le bas (`UP = (0, -1)`). Le passage scène → SVG se fait **uniquement** par le `<g translate(offset)>` de `render.py`.
 
 ## Choix techniques notables
 

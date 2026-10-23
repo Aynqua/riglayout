@@ -78,11 +78,28 @@ def test_scene_renders_one_cable_per_connection(tmp_path, write_json, theme):
     render_scene_svg(str(scene_path), str(out), theme, padding_mm=10)
 
     root = parse(out)
-    # 2 appareils de 100 mm + 20 mm d'écart + 2 × 10 mm de marge
-    assert root.get("viewBox") == "0 0 240.0 70.0"
-    cables = [p for p in root.iter(f"{SVG}path") if p.get("opacity") == "0.9"]
+    _, _, width, height = (float(v) for v in root.get("viewBox").split())
+    # Au moins : 2 appareils de 100 mm + 20 mm d'écart + 2 × 10 mm de marge ; les câbles peuvent agrandir la scène.
+    assert width >= 240 and height >= 70
+    cables = [g for g in root.iter(f"{SVG}g") if "cable" in (g.get("class") or "").split()]
     assert len(cables) == 2
-    assert {c.get("stroke") for c in cables} == {"#e67e22", "#3498db"}
+    strokes = {g.get("class"): g.find(f"{SVG}path").get("stroke") for g in cables}
+    assert strokes == {"cable cable-midi": theme.cables.colors.midi, "cable cable-audio": theme.cables.colors.audio}
+
+
+def test_scene_detail_shows_legends(tmp_path, monkeypatch):
+    from tests.conftest import ROOT
+    from renderer.models import Theme
+    monkeypatch.chdir(ROOT)
+    theme = Theme(**json.loads((ROOT / "themes" / "flat.json").read_text(encoding="utf-8")))
+
+    def texts(show_labels):
+        out = tmp_path / f"scene-{show_labels}.svg"
+        render_scene_svg("scenes/nays_2026.json", str(out), theme, show_labels=show_labels)
+        return len(list(parse(out).iter(f"{SVG}text")))
+
+    assert texts(False) == 0
+    assert texts(True) > 0
 
 
 def test_empty_scene_raises(tmp_path, write_json, theme):
