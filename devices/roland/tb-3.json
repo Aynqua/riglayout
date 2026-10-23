@@ -1,0 +1,101 @@
+{
+  "name": "Roland TB-3",
+  "manufacturer": "Roland",
+  "model": "TB-3",
+  "physical": {
+    "width_mm": 240.0,
+    "height_mm": 173.0,
+    "depth_mm": 57.0
+  },
+  "components": [
+    {
+      "type": "pad",
+      "x": 0.5,
+      "y": 0.5,
+      "width_mm": 120.0,
+      "height_mm": 60.0,
+      "legend": "TOUCH PAD",
+      "legend_bold": true
+    },
+    {
+      "type": "encoder",
+      "x": 0.15,
+      "y": 0.3,
+      "diameter_mm": 14.0,
+      "legend": "TUNE"
+    },
+    {
+      "type": "encoder",
+      "x": 0.85,
+      "y": 0.3,
+      "diameter_mm": 14.0,
+      "legend": "CUTOFF"
+    }
+  ],
+"ports": [
+    {
+      "id": "headphones",
+      "label": "Phones",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.10,
+      "y": 0.0
+    },
+    {
+      "id": "audio-out",
+      "label": "Audio Out L/Mono",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.19,
+      "y": 0.0
+    },
+    {
+      "id": "audio-out-r",
+      "label": "Audio Out R",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.28,
+      "y": 0.0
+    },
+    {
+      "id": "midi-in",
+      "label": "MIDI In",
+      "direction": "input",
+      "signal": "midi",
+      "connector": "5-pin DIN",
+      "x": 0.40,
+      "y": 0.0
+    },
+    {
+      "id": "midi-out",
+      "label": "MIDI Out",
+      "direction": "output",
+      "signal": "midi",
+      "connector": "5-pin DIN",
+      "x": 0.49,
+      "y": 0.0
+    },
+    {
+      "id": "power-in",
+      "label": "DC In",
+      "direction": "input",
+      "signal": "power",
+      "connector": "DC barrel jack",
+      "voltage_v": 12,
+      "x": 0.62,
+      "y": 0.0
+    },
+    {
+      "id": "usb",
+      "label": "USB",
+      "direction": "bidirectional",
+      "signal": "usb",
+      "connector": "USB-B",
+      "x": 0.75,
+      "y": 0.0
+    }
+  ]
+}

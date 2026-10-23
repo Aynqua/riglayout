@@ -1,28 +1,113 @@
 {
-    "name": "Live Rig",
+    "name": "Live Rig Principal",
     "devices": [
         {
-            "id": "my_digitakt",
+            "id": "digitakt",
             "device": "devices/elektron/digitakt2.json",
-            "x": 0.3,
-            "y": 0.5
+            "position": {
+                "type": "absolute",
+                "x": 0.0,
+                "y": 0.0
+            }
         },
         {
-            "id": "my_octatrack",
-            "device": "devices/elektron/octatrack.json",
-            "x": 0.7,
-            "y": 0.5
+            "id": "octatrack",
+            "device": "devices/elektron/octatrack2.json",
+            "position": {
+                "type": "relative",
+                "anchor": "right",
+                "target": "digitakt",
+                "spacing_mm": 10.0
+            }
+        },
+        {
+            "id": "jx08",
+            "device": "devices/roland/jx-08.json",
+            "position": {
+                "type": "absolute",
+                "x": 0.0,
+                "y": -173.0
+            }
+        },
+        {
+            "id": "tb3",
+            "device": "devices/roland/tb-3.json",
+            "position": {
+                "type": "absolute",
+                "x": 325.0,
+                "y": -200.0
+            }
         }
     ],
     "connections": [
         {
             "source": {
-                "device_id": "my_digitakt",
+                "device_id": "digitakt",
                 "port_id": "midi-out"
             },
             "target": {
-                "device_id": "my_octatrack",
+                "device_id": "octatrack",
                 "port_id": "midi-in"
+            }
+        },
+        {
+            "source": {
+                "device_id": "octatrack",
+                "port_id": "midi-thru"
+            },
+            "target": {
+                "device_id": "jx08",
+                "port_id": "midi-in"
+            }
+        },
+        {
+            "source": {
+                "device_id": "jx08",
+                "port_id": "midi-out"
+            },
+            "target": {
+                "device_id": "tb3",
+                "port_id": "midi-in"
+            }
+        },
+        {
+            "source": {
+                "device_id": "digitakt",
+                "port_id": "audio-out-l"
+            },
+            "target": {
+                "device_id": "octatrack",
+                "port_id": "audio-in-a"
+            }
+        },
+        {
+            "source": {
+                "device_id": "digitakt",
+                "port_id": "audio-out-r"
+            },
+            "target": {
+                "device_id": "octatrack",
+                "port_id": "audio-in-b"
+            }
+        },
+        {
+            "source": {
+                "device_id": "jx08",
+                "port_id": "audio-out"
+            },
+            "target": {
+                "device_id": "octatrack",
+                "port_id": "audio-in-c"
+            }
+        },
+        {
+            "source": {
+                "device_id": "tb3",
+                "port_id": "audio-out"
+            },
+            "target": {
+                "device_id": "octatrack",
+                "port_id": "audio-in-d"
             }
         }
     ]

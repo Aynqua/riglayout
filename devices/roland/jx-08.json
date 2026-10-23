@@ -1,0 +1,106 @@
+{
+  "name": "Roland JX-08",
+  "manufacturer": "Roland",
+  "model": "JX-08",
+  "physical": {
+    "width_mm": 300.0,
+    "height_mm": 128.0,
+    "depth_mm": 47.0
+  },
+  "components": [
+    {
+      "type": "screen",
+      "x": 0.5,
+      "y": 0.25,
+      "width_mm": 60.0,
+      "height_mm": 20.0
+    },
+    {
+      "type": "encoder",
+      "x": 0.15,
+      "y": 0.65,
+      "diameter_mm": 12.0,
+      "legend": "CUTOFF"
+    },
+    {
+      "type": "encoder",
+      "x": 0.30,
+      "y": 0.65,
+      "diameter_mm": 12.0,
+      "legend": "RESO"
+    },
+    {
+      "type": "button",
+      "x": 0.85,
+      "y": 0.65,
+      "width_mm": 15.0,
+      "height_mm": 10.0,
+      "legend": "PATCH"
+    }
+  ],
+"ports": [
+    {
+      "id": "midi-in",
+      "label": "MIDI In",
+      "direction": "input",
+      "signal": "midi",
+      "connector": "5-pin DIN",
+      "x": 0.36,
+      "y": 0.0
+    },
+    {
+      "id": "midi-out",
+      "label": "MIDI Out",
+      "direction": "output",
+      "signal": "midi",
+      "connector": "5-pin DIN",
+      "x": 0.43,
+      "y": 0.0
+    },
+    {
+      "id": "mix-in",
+      "label": "Mix In",
+      "direction": "input",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.58,
+      "y": 0.0
+    },
+    {
+      "id": "audio-out",
+      "label": "Output",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.64,
+      "y": 0.0
+    },
+    {
+      "id": "phones",
+      "label": "Phones",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.70,
+      "y": 0.0
+    },
+    {
+      "id": "usb",
+      "label": "USB",
+      "direction": "bidirectional",
+      "signal": "usb",
+      "connector": "USB-C",
+      "x": 0.81,
+      "y": 0.0
+    },
+    {
+      "id": "power",
+      "label": "Power",
+      "direction": "input",
+      "signal": "power",
+      "connector": "Switch",
+      "x": 0.87,
+      "y": 0.0
+    }
+  ]
+}

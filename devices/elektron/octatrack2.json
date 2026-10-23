@@ -1,0 +1,865 @@
+{
+  "manufacturer": "Elektron",
+  "model": "Octatrack",
+  "physical": {
+    "width_mm": 340.0,
+    "height_mm": 176.0,
+    "depth_mm": 63.0
+  },
+  "components": [
+    {
+      "type": "frame",
+      "label": "Screen Frame",
+      "legend": "Octatrack MK II",
+      "legend_position": "bottom_left",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "x": 0.471,
+      "y": 0.331,
+      "width_mm": 73.5,
+      "height_mm": 51.2
+    },
+    {
+      "type": "logo",
+      "label": "Elektron",
+      "icon_path_d": "M5.848 0.0148L38.335 0.0148L31.837 26.6538L0 26.6538ZM8.447 3.2635L3.899 23.4051L28.589 23.4051L29.888 18.2073L18.193 18.2073L31.837 3.2635Z",
+      "icon_view_box": [0, 0, 38.3342, 26.6686],
+      "icon_fill_rule": "evenodd",
+      "x": 0.967,
+      "y": 0.088,
+      "width_mm": 13.5,
+      "height_mm": 9.4
+    },
+    {
+      "type": "screen",
+      "label": "OLED Screen",
+      "x": 0.471,
+      "y": 0.319,
+      "width_mm": 60.1,
+      "height_mm": 33.5
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.034,
+      "y": 0.038,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.477,
+      "y": 0.038,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.970,
+      "y": 0.038,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.034,
+      "y": 0.966,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.477,
+      "y": 0.966,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "screw",
+      "label": "",
+      "x": 0.970,
+      "y": 0.966,
+      "diameter_mm": 2.4
+    },
+    {
+      "type": "encoder",
+      "label": "Volume casque",
+      "x": 0.059,
+      "y": 0.187,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "button",
+      "label": "MIDI",
+      "legend": "MIDI",
+      "x": 0.042,
+      "y": 0.310,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Enregistrement 1",
+      "legend": "REC 1",
+      "x": 0.134,
+      "y": 0.276,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Enregistrement 2",
+      "legend": "REC 2",
+      "x": 0.181,
+      "y": 0.276,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Enregistrement 3",
+      "legend": "REC 3",
+      "x": 0.228,
+      "y": 0.276,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "PROJ",
+      "legend": "PROJ",
+      "x": 0.042,
+      "y": 0.431,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "PART",
+      "legend": "PART",
+      "x": 0.091,
+      "y": 0.431,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "AED",
+      "legend": "AED",
+      "x": 0.139,
+      "y": 0.431,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "MIX",
+      "legend": "MIX",
+      "x": 0.185,
+      "y": 0.431,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "ARR",
+      "legend": "ARR",
+      "x": 0.233,
+      "y": 0.431,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Fonction",
+      "legend": "FUNC",
+      "fill": "#d9d9d7",
+      "stroke": "#242626",
+      "x": 0.053,
+      "y": 0.578,
+      "width_mm": 17.0,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Cue",
+      "legend": "CUE",
+      "x": 0.139,
+      "y": 0.576,
+      "width_mm": 15.2,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Piste 1",
+      "legend": "T1",
+      "x": 0.329,
+      "y": 0.193,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Piste 5",
+      "legend": "T5",
+      "x": 0.627,
+      "y": 0.193,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Piste 2",
+      "legend": "T2",
+      "x": 0.329,
+      "y": 0.283,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Piste 6",
+      "legend": "T6",
+      "x": 0.627,
+      "y": 0.283,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Piste 3",
+      "legend": "T3",
+      "x": 0.329,
+      "y": 0.373,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Piste 7",
+      "legend": "T7",
+      "x": 0.627,
+      "y": 0.373,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Piste 4",
+      "legend": "T4",
+      "x": 0.329,
+      "y": 0.463,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Piste 8",
+      "legend": "T8",
+      "x": 0.627,
+      "y": 0.463,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "SRC",
+      "legend": "SRC",
+      "x": 0.385,
+      "y": 0.553,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "AMP",
+      "legend": "AMP",
+      "x": 0.431,
+      "y": 0.553,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "LFO",
+      "legend": "LFO",
+      "x": 0.478,
+      "y": 0.553,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "FX1",
+      "legend": "FX1",
+      "x": 0.525,
+      "y": 0.553,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "FX2",
+      "legend": "FX2",
+      "x": 0.572,
+      "y": 0.553,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 1",
+      "x": 0.725,
+      "y": 0.249,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 2",
+      "x": 0.808,
+      "y": 0.249,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 3",
+      "x": 0.887,
+      "y": 0.249,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 4",
+      "x": 0.967,
+      "y": 0.249,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 5",
+      "x": 0.808,
+      "y": 0.405,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 6",
+      "x": 0.887,
+      "y": 0.405,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "encoder",
+      "label": "Encodeur 7",
+      "x": 0.967,
+      "y": 0.405,
+      "diameter_mm": 12.1
+    },
+    {
+      "type": "button",
+      "label": "Tap tempo",
+      "legend": "TAP",
+      "x": 0.728,
+      "y": 0.405,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Motifs",
+      "legend": "PTN",
+      "x": 0.053,
+      "y": 0.709,
+      "width_mm": 15.2,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Banque",
+      "legend": "BANK",
+      "x": 0.139,
+      "y": 0.709,
+      "width_mm": 15.2,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Oui",
+      "legend": "YES",
+      "x": 0.211,
+      "y": 0.622,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Non",
+      "legend": "NO",
+      "x": 0.211,
+      "y": 0.709,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Haut",
+      "legend": "▲",
+      "x": 0.306,
+      "y": 0.621,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Gauche",
+      "legend": "◄",
+      "x": 0.259,
+      "y": 0.709,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Bas",
+      "legend": "▼",
+      "x": 0.306,
+      "y": 0.709,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Droite",
+      "legend": "►",
+      "x": 0.353,
+      "y": 0.709,
+      "width_mm": 10.9,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Record",
+      "icon": "record",
+      "x": 0.448,
+      "y": 0.709,
+      "width_mm": 15.2,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Play",
+      "icon": "play",
+      "x": 0.506,
+      "y": 0.709,
+      "width_mm": 15.2,
+      "height_mm": 11.0
+    },
+    {
+      "type": "button",
+      "label": "Stop",
+      "icon": "stop",
+      "x": 0.564,
+      "y": 0.709,
+      "width_mm": 15.2,
+      "height_mm": 11.0
+    },
+    {
+      "type": "pad",
+      "label": "Scène A",
+      "legend": "A",
+      "x": 0.675,
+      "y": 0.669,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Scène B",
+      "legend": "B",
+      "x": 0.959,
+      "y": 0.669,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "frame",
+      "label": "Crossfader — glissière",
+      "x": 0.817,
+      "y": 0.664,
+      "width_mm": 45.0,
+      "height_mm": 4.0
+    },
+    {
+      "type": "pad",
+      "label": "Crossfader — curseur",
+      "x": 0.749,
+      "y": 0.663,
+      "width_mm": 10.0,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 01",
+      "legend": "1",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.052,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 02",
+      "legend": "2",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.108,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 03",
+      "legend": "3",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.164,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 04",
+      "legend": "4",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.22,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 05",
+      "legend": "5",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.276,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 06",
+      "legend": "6",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.331,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 07",
+      "legend": "7",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.387,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 08",
+      "legend": "8",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.443,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 09",
+      "legend": "9",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.499,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 10",
+      "legend": "10",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.555,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 11",
+      "legend": "11",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.611,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 12",
+      "legend": "12",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.667,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 13",
+      "legend": "13",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.722,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 14",
+      "legend": "14",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.778,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 15",
+      "legend": "15",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.834,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "pad",
+      "label": "Séquenceur — touche 16",
+      "legend": "16",
+      "legend_font_size_mm": 5.5,
+      "legend_bold": true,
+      "underline": true,
+      "x": 0.89,
+      "y": 0.854,
+      "width_mm": 15.8,
+      "height_mm": 16.4
+    },
+    {
+      "type": "button",
+      "label": "Page",
+      "legend": "PAGE",
+      "x": 0.955,
+      "y": 0.867,
+      "width_mm": 16.4,
+      "height_mm": 11.0
+    },
+    {
+      "type": "led",
+      "label": "Voyant de page 1",
+      "x": 0.933,
+      "y": 0.795,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant de page 2",
+      "x": 0.948,
+      "y": 0.795,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant de page 3",
+      "x": 0.963,
+      "y": 0.795,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant de page 4",
+      "x": 0.978,
+      "y": 0.795,
+      "diameter_mm": 2.1
+    },
+    {
+      "type": "led",
+      "label": "Voyant Card",
+      "x": 0.649,
+      "y": 0.10,
+      "diameter_mm": 2.1
+    }
+  ],
+"ports": [
+    {
+      "id": "power-in",
+      "label": "12V DC In",
+      "direction": "input",
+      "signal": "power",
+      "connector": "DC barrel jack",
+      "voltage_v": 12,
+      "x": 0.84,
+      "y": 0.0
+    },
+    {
+      "id": "usb",
+      "label": "USB 2.0",
+      "direction": "bidirectional",
+      "signal": "usb",
+      "connector": "USB-B",
+      "x": 0.71,
+      "y": 0.0
+    },
+    {
+      "id": "midi-thru",
+      "label": "MIDI Thru",
+      "direction": "output",
+      "signal": "midi",
+      "connector": "5-pin DIN",
+      "x": 0.45,
+      "y": 0.0
+    },
+    {
+      "id": "midi-out",
+      "label": "MIDI Out",
+      "direction": "output",
+      "signal": "midi",
+      "connector": "5-pin DIN",
+      "x": 0.39,
+      "y": 0.0
+    },
+    {
+      "id": "midi-in",
+      "label": "MIDI In",
+      "direction": "input",
+      "signal": "midi",
+      "connector": "5-pin DIN",
+      "x": 0.33,
+      "y": 0.0
+    },
+    {
+      "id": "audio-in-c",
+      "label": "Input C",
+      "direction": "input",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.26,
+      "y": 0.0
+    },
+    {
+      "id": "audio-in-d",
+      "label": "Input D",
+      "direction": "input",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.26,
+      "y": 0.00
+    },
+    {
+      "id": "audio-in-a",
+      "label": "Input A",
+      "direction": "input",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.21,
+      "y": 0.0
+    },
+    {
+      "id": "audio-in-b",
+      "label": "Input B",
+      "direction": "input",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.21,
+      "y": 0.00
+    },
+    {
+      "id": "audio-out-cue-l",
+      "label": "Cue Out L",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.16,
+      "y": 0.0
+    },
+    {
+      "id": "audio-out-cue-r",
+      "label": "Cue Out R",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.16,
+      "y": 0.00
+    },
+    {
+      "id": "audio-out-main-l",
+      "label": "Main Out L",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.11,
+      "y": 0.0
+    },
+    {
+      "id": "audio-out-main-r",
+      "label": "Main Out R",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm jack",
+      "x": 0.11,
+      "y": 0.00
+    },
+    {
+      "id": "headphones",
+      "label": "Headphones",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "6.35mm TRS stereo jack",
+      "x": 0.05,
+      "y": 0.00
+    }
+  ]
+}

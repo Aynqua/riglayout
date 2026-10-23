@@ -1,17 +1,32 @@
 import json
 import os
 import svgwrite
-from typing import List, Mapping, Optional
+from typing import List, Mapping, Optional, Union, Literal
 from pydantic import BaseModel, Field
 
 from renderer.models import DeviceLayout
-from renderer.svg import render_svg
+from renderer.themes import Theme
+from renderer.svg import draw_device_to_group
+from svgwrite.shapes import Rect
+from svgwrite.path import Path
+
+class AbsolutePosition(BaseModel):
+    type: Literal["absolute"] = "absolute"
+    x: float
+    y: float
+
+
+class RelativePosition(BaseModel):
+    type: Literal["relative"] = "relative"
+    anchor: Literal["right", "left", "top", "bottom"] = "right"
+    target: str = Field(..., min_length=1)
+    spacing_mm: float = 15.0
+
 
 class SceneDevice(BaseModel):
     id: str = Field(..., min_length=1)
     device: str = Field(..., min_length=1)
-    x: float = Field(..., ge=0.0, le=1.0)
-    y: float = Field(..., ge=0.0, le=1.0)
+    position: Union[AbsolutePosition, RelativePosition]
 
 
 class PortEndpoint(BaseModel):
@@ -78,15 +93,23 @@ def validate_scene_connections(
             )
 
 
-def render_scene_svg(scene_path: str, output_path: str, theme, scene_width_mm: float = 1200.0, scene_height_mm: float = 800.0):
+def render_scene_svg(
+    scene_path: str,
+    output_path: str,
+    theme: Theme,
+    padding_mm: float = 80.0,
+    show_labels: bool = False
+):
     # 1. Charger le fichier de scène JSON
     with open(scene_path, 'r', encoding='utf-8') as f:
         scene_data = json.load(f)
     scene = Scene(**scene_data)
 
+    if not scene.devices:
+        raise ValueError("La scène ne contient aucun appareil à rendre.")
+
     # 2. Charger les layouts de chaque appareil référencé
     layouts_by_instance = {}
-    
     for dev_ref in scene.devices:
         with open(dev_ref.device, 'r', encoding='utf-8') as f:
             dev_json = json.load(f)
@@ -96,37 +119,91 @@ def render_scene_svg(scene_path: str, output_path: str, theme, scene_width_mm: f
     # 3. Valider la cohérence des connexions
     validate_scene_connections(scene, layouts_by_instance)
 
-    # 4. Initialiser le dessin SVG global de la scène
+    # 4. Résolution intelligente des positions (Absolues et Relatives en cascade)
+    resolved_rects = {}  # id -> (top_left_x, top_left_y, width, height)
+    unresolved = list(scene.devices)
+    iterations = 0
+
+    while unresolved and iterations < 10:
+        next_unresolved = []
+        for dev_ref in unresolved:
+            layout = layouts_by_instance[dev_ref.id]
+            dev_w = layout.physical.width_mm
+            dev_h = layout.physical.height_mm
+            pos = dev_ref.position
+
+            if pos.type == "absolute":
+                resolved_rects[dev_ref.id] = (pos.x, pos.y, dev_w, dev_h)
+            elif pos.type == "relative":
+                target_id = pos.target
+                if target_id in resolved_rects:
+                    t_x, t_y, t_w, t_h = resolved_rects[target_id]
+                    spacing = pos.spacing_mm
+
+                    if pos.anchor == "right":
+                        x = t_x + t_w + spacing
+                        y = t_y
+                    elif pos.anchor == "left":
+                        x = t_x - dev_w - spacing
+                        y = t_y
+                    elif pos.anchor == "bottom":
+                        x = t_x
+                        y = t_y + t_h + spacing
+                    elif pos.anchor == "top":
+                        x = t_x
+                        y = t_y - dev_h - spacing
+                    else:
+                        x, y = t_x + t_w + spacing, t_y
+
+                    resolved_rects[dev_ref.id] = (x, y, dev_w, dev_h)
+                else:
+                    next_unresolved.append(dev_ref)
+
+        if len(unresolved) == len(next_unresolved):
+            raise ValueError("Erreur de dépendance circulaire ou cible introuvable dans les positions relatives.")
+        unresolved = next_unresolved
+        iterations += 1
+
+    # 5. Calcul automatique des dimensions globales de la scène
+    min_x, max_x = float('inf'), float('-inf')
+    min_y, max_y = float('inf'), float('-inf')
+
+    for x, y, w, h in resolved_rects.values():
+        min_x = min(min_x, x)
+        max_x = max(max_x, x + w)
+        min_y = min(min_y, y)
+        max_y = max(max_y, y + h)
+
+    scene_width_mm = (max_x - min_x) + (padding_mm * 2)
+    scene_height_mm = (max_y - min_y) + (padding_mm * 2)
+
+    offset_x = padding_mm - min_x
+    offset_y = padding_mm - min_y
+
+    # 6. Initialiser le dessin SVG global de la scène
     dwg = svgwrite.Drawing(
         output_path,
         size=(f"{scene_width_mm}mm", f"{scene_height_mm}mm"),
         viewBox=f"0 0 {scene_width_mm} {scene_height_mm}"
     )
 
-    # Fond de scène
-    dwg.add(dwg.rect(insert=(0, 0), size=(scene_width_mm, scene_height_mm), fill="#111111"))
-
+    # Fond de scène dynamique
+    dwg.add(Rect(insert=(0, 0), size=(scene_width_mm, scene_height_mm), fill="#111111"))
     port_coordinates = {}
 
-    # 5. Dessiner chaque appareil sur la scène
-    # 5. Dessiner chaque appareil sur la scène avec tous ses détails
+    # 7. Dessiner chaque appareil sur la scène à l'aide du moteur partagé
     for dev_ref in scene.devices:
         layout = layouts_by_instance[dev_ref.id]
-        
-        dev_w = layout.physical.width_mm
-        dev_h = layout.physical.height_mm
-        
-        center_x = dev_ref.x * scene_width_mm
-        center_y = dev_ref.y * scene_height_mm
-        top_left_x = center_x - (dev_w / 2)
-        top_left_y = center_y - (dev_h / 2)
+        rx, ry, dev_w, dev_h = resolved_rects[dev_ref.id]
 
-        # Groupe principal pour l'appareil, positionné aux coordonnées de la scène
-        device_group = dwg.g(transform=f"translate({top_left_x} {top_left_y})")
+        final_x = rx + offset_x
+        final_y = ry + offset_y
+
+        device_group = dwg.g(transform=f"translate({final_x} {final_y})")
 
         # Fond de l'appareil (basé sur le thème)
         bg_style = theme.background
-        device_group.add(dwg.rect(
+        device_group.add(Rect(
             insert=(0, 0),
             size=(dev_w, dev_h),
             rx=bg_style.get("rx", 6),
@@ -135,61 +212,20 @@ def render_scene_svg(scene_path: str, output_path: str, theme, scene_width_mm: f
             stroke_width=bg_style.get("stroke_width", 1.5)
         ))
 
-        # Dessin des composants de la machine (encodeurs, pads, écran, etc.)
-        for comp in layout.components:
-            cx = comp.x * dev_w
-            cy = comp.y * dev_h
-
-            if comp.type == "logo":
-                # Optionnel : appel à ton rendu de logo si besoin
-                continue
-
-            style = theme.components.get(comp.type)
-            if not style:
-                continue
-
-            if comp.type == "screen":
-                x = cx - (comp.width_mm / 2)
-                y = cy - (comp.height_mm / 2)
-                device_group.add(dwg.rect(
-                    insert=(x, y),
-                    size=(comp.width_mm, comp.height_mm),
-                    rx=style.rx,
-                    fill=comp.fill or style.fill,
-                    stroke=comp.stroke or style.stroke,
-                    stroke_width=style.stroke_width
-                ))
-            elif comp.type in ("encoder", "led", "screw"):
-                r = comp.diameter_mm / 2
-                device_group.add(dwg.circle(
-                    center=(cx, cy),
-                    r=r,
-                    fill=comp.fill or style.fill,
-                    stroke=comp.stroke or style.stroke,
-                    stroke_width=style.stroke_width
-                ))
-            elif comp.type in ("button", "pad", "frame", "logo"):
-                x = cx - (comp.width_mm / 2)
-                y = cy - (comp.height_mm / 2)
-                device_group.add(dwg.rect(
-                    insert=(x, y),
-                    size=(comp.width_mm, comp.height_mm),
-                    rx=style.rx,
-                    fill=comp.fill or style.fill,
-                    stroke=comp.stroke or style.stroke,
-                    stroke_width=style.stroke_width
-                ))
+        # Dessin unifié des composants et des labels éventuels
+        draw_device_to_group(device_group, layout, theme, show_labels=show_labels)
 
         dwg.add(device_group)
 
         # Enregistrer les coordonnées absolues des ports pour les câbles
         for port in layout.ports:
-            p_abs_x = top_left_x + (port.x * dev_w)
-            p_abs_y = top_left_y + (port.y * dev_h)
+            p_abs_x = final_x + (port.x * dev_w)
+            p_abs_y = final_y + (port.y * dev_h)
             port_coordinates[(dev_ref.id, port.id)] = (p_abs_x, p_abs_y)
 
-    # 6. Dessiner les connexions (câbles orthogonaux)
-    for conn in scene.connections:
+# 8. Routage réaliste type "Goulotte de câbles arrière" (Cable Tray)
+    # On trie ou indexe les connexions pour leur donner des pistes parallèles distinctes le long des boîtiers
+    for i, conn in enumerate(scene.connections):
         source_key = (conn.source.device_id, conn.source.port_id)
         target_key = (conn.target.device_id, conn.target.port_id)
 
@@ -197,21 +233,44 @@ def render_scene_svg(scene_path: str, output_path: str, theme, scene_width_mm: f
             x1, y1 = port_coordinates[source_key]
             x2, y2 = port_coordinates[target_key]
 
-            offset_y = -35.0
-            mid_y = min(y1, y2) + offset_y
+            # 1. Le stub vertical sortant du port (ex: 8mm)
+            stub_len = 8.0
+            y_out1 = y1 - stub_len
+            y_out2 = y2 - stub_len
 
-            path_d = f"M {x1} {y1} L {x1} {mid_y} L {x2} {mid_y} L {x2} {y2}"
+            # 2. Trouver le sommet de la machine source pour longer sa tranche arrière
+            # On place le faisceau de câbles juste au-dessus du bord supérieur du boîtier source
+            src_rect = resolved_rects[conn.source.device_id]
+            src_top_y = src_rect[1]  # Coordonnée Y du haut de la machine source
+            
+            # Piste horizontale dédiée pour ce câble (espacée de 3.5mm par rapport aux autres pour éviter la superposition)
+            cable_tray_y = src_top_y - 12.0 - (i * 3.5)
+
+            # 3. Tracé orthogonal propre "en goulotte" :
+            # - Départ port source
+            # - Montée du stub
+            # - Trajet horizontal le long du faisceau arrière
+            # - Descente vers le port cible
+            path_d = (
+                f"M {x1} {y1} "
+                f"L {x1} {y_out1} "
+                f"L {x1} {cable_tray_y} "
+                f"L {x2} {cable_tray_y} "
+                f"L {x2} {y_out2} "
+                f"L {x2} {y2}"
+            )
+
             cable_color = "#e67e22" if "midi" in conn.source.port_id else "#3498db"
 
-            dwg.add(dwg.path(
+            dwg.add(Path(
                 d=path_d,
                 fill="none",
                 stroke=cable_color,
-                stroke_width=3.0,
+                stroke_width=2.5,
                 stroke_linecap="round",
                 stroke_linejoin="round",
-                opacity=0.85
+                opacity=0.9
             ))
 
     dwg.save()
-    print(f"Scène rendue avec succès dans : {output_path}")
+    print(f"Scène rendue avec succès dans : {output_path} (Taille auto : {scene_width_mm:.1f}x{scene_height_mm:.1f} mm)")
