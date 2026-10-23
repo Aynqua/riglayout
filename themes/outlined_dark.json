@@ -47,12 +47,19 @@
       "stroke_width": 0.8
     }
   },
+  "ports": {
+    "marker_radius_mm": 1.0,
+    "stroke_width_mm": 0.3,
+    "font_size_mm": 1.6,
+    "label_gap_mm": 0.8
+  },
   "cables": {
     "width_mm": 1.2,
     "spacing_mm": 2.2,
     "clearance_mm": 6.0,
     "corner_radius_mm": 1.5,
     "opacity": 0.95,
+    "label_font_size_mm": 2.0,
     "colors": {
       "audio": "#3b82f6",
       "midi": "#f59e0b",

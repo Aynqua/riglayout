@@ -36,6 +36,7 @@ Tous les composants ont `type`, `x` et `y`. Les autres champs dépendent du type
 | `led` | `diameter_mm` |
 | `screw` | `diameter_mm` |
 | `logo` | `width_mm`, `height_mm`, `icon_path_d`, `icon_view_box` |
+| `text` | `legend` (le texte) |
 
 Exemple de boutons et de commandes :
 
@@ -72,10 +73,25 @@ Exemple de boutons et de commandes :
 - `label` est une description destinée aux métadonnées; le renderer ne l'affiche pas.
 - `legend` est le texte imprimé sur le composant. Les légendes des boutons et pads apparaissent avec `--detail` (alias `--labels`).
 - `legend_bold`, `legend_font_size_mm`, `legend_color` et `underline` contrôlent la légende. Sa taille est réduite automatiquement si elle ne tient pas dans le composant.
+- `legend_spans` découpe la légende en morceaux de styles différents; `legend` devient alors leur concaténation. Chaque morceau a `text` et, en option, `weight` (graisse CSS de `100`, très fin, à `900`, très gras), `font_family`, `color` et `font_size_mm`. Les espaces en début de morceau sont conservés.
+- `font_family` choisit la police de la légende (liste de repli CSS, ex. `"Helvetica Neue, Arial, sans-serif"`); par défaut, celle du thème. Le PNG utilise les polices installées sur la machine qui fait le rendu.
+
+```json
+{
+  "legend_spans": [
+    {"text": "Octatrack", "weight": 700},
+    {"text": " MKII", "weight": 200, "font_family": "Helvetica Neue, Segoe UI, Arial, sans-serif"}
+  ],
+  "font_family": "Helvetica Neue, Arial, sans-serif"
+}
+```
+
+- `legend_always: true` affiche la légende même sans `--detail` : pour ce qui est imprimé sur la machine elle-même (nom du modèle, marque), par exemple le nom sous l'écran du Digitakt II.
 - `legend_position` accepte `center` ou `bottom_left`; cette dernière position est utile pour un nom sur un `frame`.
 - `icon` sélectionne une icône intégrée, par exemple `play`, `record`, `stop`, `keyboard`, `perform`, `save_project`, `samples`, `metronome`, `arrow_up`, `arrow_down`, `arrow_left` ou `arrow_right`.
 - `icon_path_d` permet de définir un pictogramme avec un chemin SVG `d`. Il doit être accompagné de `icon_view_box`, un tableau `[x, y, largeur, hauteur]`.
-- `icon_mode` vaut `fill` (par défaut) ou `stroke`. `icon_fill_rule` accepte `nonzero` (par défaut) ou `evenodd`, utile pour les logos avec des découpes.
+- `icon_mode` vaut `fill` (par défaut) ou `stroke`. En `stroke`, `icon_stroke_width` donne l'épaisseur du trait dans les unités de `icon_view_box` (la valeur `stroke-width` du SVG d'origine). `icon_linecap` règle les extrémités des traits : `round` (par défaut), `butt` (coupées droit, comme l'emblème Roland) ou `square`.
+- Le path peut être copié tel quel depuis un fichier SVG, y compris en notation compacte (`a15 15 0 0 1 15-15`). Un logo fait de plusieurs `<path>` se déclare en **liste** : `"icon_path_d": ["m192 22.7…", "m226.5 80.7…"]`, chaque `d` copié tel quel. Ne pas les concaténer en une seule chaîne : le `m` minuscule qui ouvre un path deviendrait relatif au path précédent. `icon_fill_rule` accepte `nonzero` (par défaut) ou `evenodd`, utile pour les logos avec des découpes.
 
 Exemple de logo ou pictogramme défini dans les données, sans modifier le renderer :
 
@@ -92,6 +108,31 @@ Exemple de logo ou pictogramme défini dans les données, sans modifier le rende
   "height_mm": 12
 }
 ```
+
+### Inscriptions imprimées (`text`)
+
+Le type `text` représente ce qui est sérigraphié sur la machine : marque, nom du modèle, titres de sections. Il est **toujours affiché**, avec ou sans `--detail`.
+
+```json
+{
+  "type": "text",
+  "label": "Model Name",
+  "legend": "TB-3",
+  "x": 0.801,
+  "y": 0.068,
+  "text_anchor": "start",
+  "legend_bold": true,
+  "legend_font_size_mm": 8.0,
+  "width_mm": 37.0
+}
+```
+
+- `x`/`y` désignent le point d'ancrage, sur la ligne médiane du texte; `text_anchor` vaut `start`, `middle` (par défaut) ou `end`.
+- `width_mm` (facultatif) étire ou resserre le texte à cette largeur exacte, pratique pour imiter une typo large ou condensée.
+- `detail_only: true` réserve l'inscription au mode `--detail` (texte trop petit pour la vue d'ensemble, ex. « POLYPHONIC SYNTHESIZER » du JX-08).
+- `font_family` (facultatif) remplace la police du thème; `legend_color`, `legend_bold`, `legend_font_size_mm` s'appliquent comme pour une légende.
+
+Pour un logo de marque, préférer le tracé officiel en `logo` (ex. le mot « Roland » du TB-3 et du JX-08, issu de Wikimedia Commons) ; le type `text` sert aux inscriptions typographiques (« TB-3 », « TOUCH BASSLINE »…).
 
 `fill` et `stroke` remplacent localement le style de forme du thème. Ils sont prévus pour les exceptions matérielles, par exemple FUNC orange. Les styles par défaut sont définis par type dans le thème.
 
@@ -133,13 +174,28 @@ Les ports décrivent les entrées et sorties physiques ou logiques d'un appareil
 
 `direction` vaut `input`, `output` ou `bidirectional`; `signal` vaut `audio`, `midi`, `usb` ou `power`. `connector`, `channels`, `balanced`, `voltage_v`, `current_a` et `capabilities` sont facultatifs. `channels` décrit le nombre de canaux sur le connecteur; `balanced` indique une liaison audio équilibrée; `voltage_v` et `current_a` décrivent une alimentation. `capabilities` est une liste ouverte pour les fonctions combinées comme MIDI Thru, DIN Sync ou Overbridge. Ces métadonnées n'empêchent pas les anciens ports `audio` et `midi` de rester valides.
 
-`x` et `y` (facultatifs, normalisés entre `0` et `1`) placent le port sur l'appareil; ils servent de point d'ancrage aux câbles d'une scène. Par défaut `x = 0.5` et `y = 1.0` (bord inférieur); `y = 0.0` correspond au bord supérieur, où se trouve la connectique des machines vues de dessus.
+`label` est le nom affiché en mode `--detail`. `x` et `y` (facultatifs, normalisés entre `0` et `1`) placent le port sur l'appareil; ils servent de point d'ancrage aux câbles d'une scène. Par défaut `x = 0.5` et `y = 1.0` (bord inférieur); `y = 0.0` correspond au bord supérieur, où se trouve la connectique des machines vues de dessus.
 
 ## Thèmes
 
 Un thème contient `name`, `background` et `components`. `components` associe un type de composant à `fill`, `stroke`, `stroke_width` et éventuellement `rx`. `labels` peut définir `fill`, `font_family` et `font_size_mm` pour les légendes. Un composant peut remplacer localement `fill` ou `stroke`.
 
 Les pads utilisent le style `pad` du thème. Pour qu'ils aient le même aspect que les boutons, donne à `pad` les mêmes valeurs que `button`.
+
+`ports` (facultatif) règle l'affichage des ports en mode `--detail` : un cercle sur la tranche de l'appareil et le nom (`label`) du port, écrit vers l'intérieur.
+
+```json
+{
+  "ports": {
+    "marker_radius_mm": 1.0,
+    "stroke_width_mm": 0.3,
+    "font_size_mm": 1.6,
+    "label_gap_mm": 0.8
+  }
+}
+```
+
+`fill` (facultatif) fixe leur couleur; par défaut, c'est celle des légendes.
 
 `cables` (facultatif) règle les câbles des scènes. Tous les champs ont une valeur par défaut, y compris chaque couleur prise séparément.
 
@@ -151,6 +207,7 @@ Les pads utilisent le style `pad` du thème. Pour qu'ils aient le même aspect q
     "clearance_mm": 6.0,
     "corner_radius_mm": 1.5,
     "opacity": 0.95,
+    "label_font_size_mm": 2.0,
     "colors": {
       "audio": "#3b82f6",
       "midi": "#f59e0b",
@@ -168,11 +225,12 @@ Les pads utilisent le style `pad` du thème. Pour qu'ils aient le même aspect q
 | `clearance_mm` | Distance minimale entre un câble et un appareil |
 | `corner_radius_mm` | Rayon des coudes (`0` pour des angles vifs) |
 | `opacity` | Opacité des câbles, entre `0` et `1` |
+| `label_font_size_mm` | Taille du nom d'un câble (mode détail) |
 | `colors` | Couleur par type de signal : `audio`, `midi`, `usb`, `power` |
 
 ## Scènes
 
-Une scène positionne des instances de layouts et relie leurs ports. `device` est le chemin du JSON de layout, relatif au dossier depuis lequel la commande est lancée; `id` identifie une instance dans la scène.
+Une scène positionne des instances de layouts et relie leurs ports. `device` est le chemin du JSON de layout, relatif au **dossier du fichier de scène** (ex. `../devices/...` pour une scène dans `scenes/`); `id` identifie une instance dans la scène.
 
 ```json
 {
@@ -180,19 +238,20 @@ Une scène positionne des instances de layouts et relie leurs ports. `device` es
   "devices": [
     {
       "id": "digitakt",
-      "device": "devices/elektron/digitakt2.json",
+      "device": "../devices/elektron/digitakt2.json",
       "position": {"type": "absolute", "x": 0, "y": 0}
     },
     {
       "id": "octatrack",
-      "device": "devices/elektron/octatrack2.json",
+      "device": "../devices/elektron/octatrack2.json",
       "position": {"type": "relative", "anchor": "right", "target": "digitakt", "spacing_mm": 10}
     }
   ],
   "connections": [
     {
       "source": {"device_id": "digitakt", "port_id": "midi-out"},
-      "target": {"device_id": "octatrack", "port_id": "midi-in"}
+      "target": {"device_id": "octatrack", "port_id": "midi-in"},
+      "label": "MIDI Clock"
     }
   ]
 }
@@ -216,7 +275,7 @@ Une connexion relie un port source à un port cible. Le rendu vérifie :
 - que les deux ports ont le même `signal` ;
 - qu'un port n'est utilisé que par un seul câble, et que deux câbles ne se branchent pas au même endroit (deux ports déclarés à la même position).
 
-`label` est facultatif et n'est pas encore rendu.
+`label` est facultatif : en mode `--detail`, il est écrit le long du câble, dans sa couleur, à un endroit où il ne recouvre ni un autre câble ni un appareil.
 
 ### Câblage
 
@@ -228,4 +287,6 @@ Le câblage reproduit un branchement réel :
 - les câbles qui suivent le même chemin sont **côte à côte**, espacés de `spacing_mm`, dans un ordre qui limite les croisements ;
 - la couleur dépend du `signal` des ports et vient du thème.
 
-`--detail` affiche aussi les légendes des appareils dans une scène.
+`--detail` affiche aussi, dans une scène, les légendes des appareils, chaque port (cercle sur la tranche et nom) et les noms des câbles.
+
+La scène n'a pas de fond : le SVG (et le PNG avec `--png`) est transparent.

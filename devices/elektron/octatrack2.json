@@ -10,10 +10,14 @@
     {
       "type": "frame",
       "label": "Screen Frame",
-      "legend": "Octatrack MK II",
+      "legend_spans": [
+        {"text": "Octatrack", "weight": 700},
+        {"text": " MKII", "weight": 200, "font_family": "Helvetica Neue, Segoe UI, Arial, sans-serif"}
+      ],
+      "font_family": "Helvetica Neue, Arial, sans-serif",
+      "legend_always": true,
       "legend_position": "bottom_left",
       "legend_font_size_mm": 5.5,
-      "legend_bold": true,
       "x": 0.471,
       "y": 0.331,
       "width_mm": 73.5,

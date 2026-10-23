@@ -40,6 +40,11 @@ def all_components():
          "icon_path_d": "M0 0H10V10H0Z", "icon_view_box": [0, 0, 10, 10]},
         {"type": "logo", "x": 0.9, "y": 0.9, "width_mm": 8, "height_mm": 4,
          "icon_path_d": "M0 0H20V10H0Z", "icon_view_box": [0, 0, 20, 10]},
+        {"type": "logo", "x": 0.1, "y": 0.9, "width_mm": 6, "height_mm": 4, "icon_mode": "stroke", "icon_stroke_width": 2,
+         "icon_path_d": "M2 2H18V8", "icon_view_box": [0, 0, 20, 10]},
+        {"type": "text", "x": 0.05, "y": 0.05, "legend": "Acme", "text_anchor": "start", "legend_bold": True},
+        {"type": "text", "x": 0.95, "y": 0.05, "legend": "MODEL-1", "text_anchor": "end", "width_mm": 20},
+        {"type": "text", "x": 0.5, "y": 0.95, "legend": "petit texte", "detail_only": True},
     ]
     for index, icon in enumerate(ICONS):
         components.append({

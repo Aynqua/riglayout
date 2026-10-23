@@ -1,15 +1,16 @@
 """Câblage d'une scène : du port source au port cible sans traverser de machine ni se superposer.
 
 Étapes : ancrage des ports (anchors) → grille autour des machines (grid) → plus court chemin par câble (router)
-→ séparation des câbles qui partagent un couloir (nudging) → vérification → dessin (draw).
+→ séparation des câbles qui partagent un couloir (nudging) → vérification → dessin (draw) → noms (labels).
 """
 from typing import Dict, List, Mapping, NamedTuple
 
 from renderer.models.device import DeviceLayout
 from renderer.models.scene import Scene, SceneConnection
-from renderer.models.theme import CableStyle
+from renderer.models.theme import CableStyle, Theme
 from renderer.scene.cabling.anchors import PortAnchor, port_anchor
 from renderer.scene.cabling.draw import draw_cable
+from renderer.scene.cabling.labels import draw_cable_label, place_label
 from renderer.scene.cabling.geometry import Box, Point, segment_crosses_box, simplify
 from renderer.scene.cabling.grid import RoutingGrid
 from renderer.scene.cabling.nudging import nudge_routes
@@ -55,7 +56,7 @@ def route_cables(
                     f"'{device_ids[blocker]}' pour y brancher un câble (écart minimal : {style.clearance_mm} mm)"
                 )
 
-    raw_routes = []
+    paths: List[List[Point]] = []
     for connection, (source, target) in zip(scene.connections, ends):
         inward = (-target.direction[0], -target.direction[1])
         path = find_route(grid, source.exit, source.direction, target.exit, inward)
@@ -64,9 +65,11 @@ def route_cables(
                 f"Aucun chemin possible pour le câble {connection.source.device_id}:{connection.source.port_id}"
                 f" → {connection.target.device_id}:{connection.target.port_id}"
             )
-        raw_routes.append(simplify([source.point, *path, target.point]))
+        paths.append(path)
 
-    routes = nudge_routes(raw_routes, list(boxes.values()), style.spacing_mm, style.width_mm)
+    raw_routes = [simplify([source.point, *path, target.point]) for path, (source, target) in zip(paths, ends)]
+
+    routes = nudge_routes(raw_routes, list(boxes.values()), style.spacing_mm, style.width_mm, style.clearance_mm)
     _check_no_device_crossing(scene.connections, routes, boxes)
 
     signals = [
@@ -105,3 +108,16 @@ def _check_no_device_crossing(connections, routes, boxes: Mapping[str, Box]):
 def draw_cables(container, routes: List[CableRoute], style: CableStyle):
     for route in routes:
         draw_cable(container, route.points, getattr(style.colors, route.signal), route.signal, style)
+
+
+def draw_cable_labels(container, routes: List[CableRoute], theme: Theme, rects: Mapping[str, Rect]):
+    """Mode détail : écrit le `label` de chaque connexion qui en a un, dans la couleur du câble,
+    à un endroit libre (ni sur un autre câble, ni sur une machine)."""
+    device_boxes = [Box.from_rect(rect) for rect in rects.values()]
+    for route in routes:
+        if not route.connection.label:
+            continue
+        others = [other.points for other in routes if other is not route]
+        placement = place_label(route.points, route.connection.label, others, device_boxes, theme.cables)
+        color = getattr(theme.cables.colors, route.signal)
+        draw_cable_label(container, route.connection.label, placement, color, theme.labels.font_family, theme.cables)

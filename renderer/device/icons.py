@@ -1,5 +1,5 @@
 """Pictogrammes des commandes : icônes intégrées (registre ICONS) et icônes définies par un path SVG."""
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from svgwrite.container import Group
 from svgwrite.path import Path
@@ -13,15 +13,19 @@ def draw_device_logo(dwg, logo, center_x: float, center_y: float, color: str):
     draw_custom_icon(
         dwg, logo.icon_path_d, logo.icon_view_box,
         center_x, center_y, logo.width_mm, logo.height_mm,
-        color, logo.icon_fill_rule, logo.icon_mode
+        color, logo.icon_fill_rule, logo.icon_mode, logo.icon_stroke_width, logo.icon_linecap
     )
 
 
 def draw_custom_icon(
-    dwg, path_d: str, view_box: tuple,
+    dwg, path_d: Union[str, List[str]], view_box: tuple,
     center_x: float, center_y: float, width: float, height: float,
-    color: str, fill_rule: str = "nonzero", mode: str = "fill"
+    color: str, fill_rule: str = "nonzero", mode: str = "fill",
+    stroke_width_view: Optional[float] = None,
+    linecap: str = "round",
 ):
+    """Centre et met à l'échelle un path SVG. En mode stroke, l'épaisseur est `stroke_width_view`
+    (unités du view_box, comme dans le SVG d'origine) ou, à défaut, 6 % du plus petit côté rendu."""
     view_x, view_y, view_width, view_height = view_box
     scale = min(width / view_width, height / view_height)
     translate_x = center_x - (view_x + view_width / 2) * scale
@@ -30,13 +34,24 @@ def draw_custom_icon(
 
     fill = "none" if mode == "stroke" else color
     stroke = color if mode == "stroke" else "none"
-    stroke_width = min(width, height) * 0.06 if mode == "stroke" else 0
+    if mode != "stroke":
+        stroke_width = 0
+    elif stroke_width_view is not None:
+        stroke_width = stroke_width_view
+    else:
+        # Le trait est dessiné sous la mise à l'échelle : on divise pour obtenir des mm.
+        stroke_width = min(width, height) * 0.06 / scale
 
-    dwg.add(Path(
-        d=path_d, transform=transform, fill=fill,
-        fill_rule=fill_rule, stroke=stroke, stroke_width=stroke_width,
-        stroke_linecap="round", stroke_linejoin="round"
-    ))
+    # debug=False : le validateur de svgwrite rejette des paths valides (notation compacte des arcs, ex. « a15 15 0 0 1 15-15 »)
+    # que l'on obtient en copiant un logo depuis un fichier SVG.
+    # Une liste de paths est dessinée path par path : chacun garde le sens de son « m » initial
+    # (absolu en tête de path), ce qui n'est plus vrai si on les concatène.
+    for d in ([path_d] if isinstance(path_d, str) else path_d):
+        dwg.add(Path(
+            d=d, transform=transform, fill=fill,
+            fill_rule=fill_rule, stroke=stroke, stroke_width=stroke_width,
+            stroke_linecap=linecap, stroke_linejoin="round", debug=False,
+        ))
 
 
 def add_control_icon(dwg, icon: str, center_x: float, center_y: float, width: float, height: float, color: str):

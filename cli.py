@@ -7,9 +7,18 @@ from typing import Optional
 from renderer.models import DeviceLayout, Theme
 from renderer.device import render_svg
 from renderer.scene import render_scene_svg
+from renderer.export import DEFAULT_DPI, svg_to_png
 
 app = typer.Typer()
 THEMES_DIR = Path(__file__).resolve().parent / "themes"
+
+PNG_OPTION = typer.Option(False, "--png", help="Exporter aussi un PNG transparent à côté du SVG")
+DPI_OPTION = typer.Option(DEFAULT_DPI, "--dpi", help="Résolution du PNG (points par pouce)")
+
+
+def export_png(svg_path: Path, dpi: float):
+    png_path = svg_to_png(svg_path, svg_path.with_suffix(".png"), dpi=dpi)
+    typer.echo(f"✅ PNG transparent ({dpi:g} dpi) : {png_path}")
 
 
 def available_themes():
@@ -52,13 +61,23 @@ def slugify(value: str) -> str:
     return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", normalized.lower())).strip("-")
 
 
+def default_output_path(name: str, theme: Theme, detail: bool, in_own_folder: bool = False) -> Path:
+    """<name>-<thème>[-detail].svg dans output/ (scènes) ou output/<name>/ (machines, `in_own_folder`).
+    Un fichier distinct par thème et par mode."""
+    suffix = "-detail" if detail else ""
+    folder = Path("output") / slugify(name) if in_own_folder else Path("output")
+    return folder / f"{slugify(name)}-{slugify(theme.name)}{suffix}.svg"
+
+
 @app.command()
 def render(
     device_path: Path = typer.Argument(..., help="Chemin du fichier JSON du device"),
     theme_option: Optional[str] = typer.Option(None, "--theme", "-t", help="Nom du thème ou chemin vers son fichier JSON"),
     output_path: Optional[Path] = typer.Option(None, "--output", "-o", help="Chemin du fichier SVG généré (par défaut : nom automatique)"),
     show_labels: bool = typer.Option(False, "--labels/--no-labels", help="Afficher les détails des commandes"),
-    show_details: bool = typer.Option(False, "--detail", help="Afficher les légendes et symboles imprimés sur les commandes")
+    show_details: bool = typer.Option(False, "--detail", help="Afficher les légendes et symboles imprimés sur les commandes"),
+    png: bool = PNG_OPTION,
+    dpi: float = DPI_OPTION,
 ):
     """Rendu d'un appareil unique au format SVG."""
     typer.echo(f"Chargement du device : {device_path}")
@@ -72,14 +91,15 @@ def render(
         theme_data = json.load(f)
     theme = Theme(**theme_data)
 
+    detail = show_labels or show_details
     if output_path is None:
-        device_name = slugify(f"{device.manufacturer}-{device.model}")
-        theme_name = slugify(theme.name)
-        output_path = Path("output") / f"{device_name}-{theme_name}.svg"
+        output_path = default_output_path(f"{device.manufacturer}-{device.model}", theme, detail, in_own_folder=True)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    render_svg(device, theme, str(output_path), show_labels=show_labels or show_details)
+    render_svg(device, theme, str(output_path), show_labels=detail)
     typer.echo(f"✅ Fichier SVG généré avec succès : {output_path}")
+    if png:
+        export_png(output_path, dpi)
 
 
 @app.command(name="render-scene")
@@ -88,7 +108,9 @@ def render_scene(
     theme_option: Optional[str] = typer.Option(None, "--theme", "-t", help="Nom du thème ou chemin vers son fichier JSON"),
     output_path: Optional[Path] = typer.Option(None, "--output", "-o", help="Chemin du fichier SVG de la scène généré"),
     show_labels: bool = typer.Option(False, "--labels/--no-labels", help="Afficher les détails des commandes"),
-    show_details: bool = typer.Option(False, "--detail", help="Afficher les légendes et symboles")
+    show_details: bool = typer.Option(False, "--detail", help="Afficher les légendes, symboles, ports et noms des câbles"),
+    png: bool = PNG_OPTION,
+    dpi: float = DPI_OPTION,
 ):
     """Rendu d'une scène complète avec plusieurs appareils et câblage."""
     typer.echo(f"Chargement de la scène : {scene_path}")
@@ -99,9 +121,9 @@ def render_scene(
         theme_data = json.load(f)
     theme = Theme(**theme_data)
 
+    detail = show_labels or show_details
     if output_path is None:
-        scene_name = slugify(scene_path.stem)
-        output_path = Path("output") / f"scene-{scene_name}.svg"
+        output_path = default_output_path(f"scene-{scene_path.stem}", theme, detail)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -110,12 +132,14 @@ def render_scene(
             scene_path=str(scene_path),
             output_path=str(output_path),
             theme=theme,
-            show_labels=show_labels or show_details
+            show_labels=detail
         )
     except ValueError as error:  # inclut les ValidationError pydantic
         typer.secho(f"❌ Scène invalide : {error}", fg=typer.colors.RED, err=True)
         raise typer.Exit(code=1)
     typer.echo(f"✅ Scène SVG générée avec succès : {output_path}")
+    if png:
+        export_png(output_path, dpi)
 
 if __name__ == "__main__":
     app()

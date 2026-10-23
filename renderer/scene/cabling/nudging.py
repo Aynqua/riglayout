@@ -147,12 +147,20 @@ def _free_space(group: List[_Segment], boxes: Sequence[Box]) -> Tuple[float, flo
     return negative, positive
 
 
-def _lane_offsets(count: int, spacing: float, negative_free: float, positive_free: float, half_width: float) -> List[float]:
-    lower, upper = -negative_free + half_width, positive_free - half_width
-    room = upper - lower
-    if (count - 1) * spacing > room:
-        spacing = max(room, 0.0) / (count - 1)
+def _lane_offsets(
+    count: int, spacing: float, negative_free: float, positive_free: float, half_width: float, clearance: float
+) -> List[float]:
+    """Décalages des voies, centrés sur le couloir puis repoussés pour rester à `clearance` des machines.
+    Si le couloir est trop étroit pour ça, on se contente de ne pas toucher les machines (marge `half_width`)
+    et, en dernier recours, on resserre l'espacement."""
     span = (count - 1) * spacing
+    lower, upper = -(negative_free - clearance), positive_free - clearance
+    if span > upper - lower:
+        lower, upper = -negative_free + half_width, positive_free - half_width
+        room = upper - lower
+        if span > room:
+            spacing = max(room, 0.0) / (count - 1)
+            span = (count - 1) * spacing
     start = -span / 2
     if start < lower:
         start = lower
@@ -173,7 +181,9 @@ def _rebuild(points: Sequence[Point], segments: List[_Segment]) -> List[Point]:
     return rebuilt
 
 
-def nudge_routes(routes: Sequence[Sequence[Point]], boxes: Sequence[Box], spacing: float, width: float) -> List[List[Point]]:
+def nudge_routes(
+    routes: Sequence[Sequence[Point]], boxes: Sequence[Box], spacing: float, width: float, clearance: float = 0.0
+) -> List[List[Point]]:
     segments = [_build_segments(i, points) for i, points in enumerate(routes)]
     ordering = _Ordering(segments)
 
@@ -183,7 +193,7 @@ def nudge_routes(routes: Sequence[Sequence[Point]], boxes: Sequence[Box], spacin
     for group in _groups(segments):
         ordered = sorted(group, key=cmp_to_key(compare))
         negative_free, positive_free = _free_space(group, boxes)
-        offsets = _lane_offsets(len(ordered), spacing, negative_free, positive_free, width / 2 + LANE_SAFETY_MM)
+        offsets = _lane_offsets(len(ordered), spacing, negative_free, positive_free, width / 2 + LANE_SAFETY_MM, clearance)
         for segment, offset in zip(ordered, offsets):
             segment.offset = offset
 

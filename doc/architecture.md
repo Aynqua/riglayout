@@ -14,15 +14,18 @@ Séparation stricte **données (layouts JSON) / apparence (thèmes JSON) / moteu
 
 | Élément | Choix | Remarque |
 |---|---|---|
-| Langage | Python 3.11 | venv local dans `venv/` (layout `venv/bin/…`), ignoré par git |
+| Langage | Python 3.13 (officiel python.org, **pas** MSYS2 : pas de wheels binaires) | venv local `venv/` (layout Windows `venv/Scripts/…`), ignoré par git |
 | Validation | **pydantic 1.10** (v1 !) | `root_validator`, `Field(...)`, `Model(**dict)`. Ne pas utiliser l'API v2 (`model_validator`, `model_dump`) |
 | SVG | svgwrite 1.4.3 | unités = mm (viewBox en mm, `size="…mm"`) |
+| PNG | resvg-py 0.5.0 | rasterisation SVG → PNG RGBA transparent, `dpi` convertit les mm (wheel abi3 win_amd64) |
 | CLI | typer 0.27 (+ rich) | |
 | Tests | pytest 9.1 | `tests/`, config `pytest.ini` (`pythonpath = .`) |
-| Dépendances | `requirements.txt` / `requirements-dev.txt` | `pydantic==1.10.26 svgwrite==1.4.3 typer==0.27.3` ; dev : `+ pytest==9.1.1` |
+| Dépendances | `requirements.txt` / `requirements-dev.txt` | `pydantic==1.10.26 svgwrite==1.4.3 typer==0.27.3 resvg-py==0.5.0` ; dev : `+ pytest==9.1.1` |
 
-Lancer : `.\venv\bin\python.exe cli.py <commande> ...` (ou activer `.\venv\bin\Activate.ps1`).
-Sous Git Bash, préfixer `PYTHONIOENCODING=utf-8` sinon l'emoji ✅ du `typer.echo` final lève `UnicodeEncodeError` (le SVG est déjà écrit à ce moment-là).
+Créer : `py -3.13 -m venv venv` puis `.\venv\Scripts\python.exe -m pip install -r requirements-dev.txt`.
+Lancer : `.\venv\Scripts\python.exe cli.py <commande> ...` (ou activer `.\venv\Scripts\Activate.ps1`).
+Sous Git Bash, préfixer `PYTHONIOENCODING=utf-8` sinon les emojis ✅/❌ de `typer.echo` lèvent `UnicodeEncodeError` (le SVG est déjà écrit à ce moment-là).
+Historique : jusqu'au 2026-10-23 le venv utilisait le Python MSYS2 (`venv/bin/`), abandonné car PyPI n'a aucune wheel binaire pour `mingw_x86_64`.
 
 ## Arborescence
 
@@ -38,6 +41,8 @@ renderer/
     draw.py            draw_device_to_group (moteur partagé), render_svg
     legends.py         Couleur / taille / placement des légendes
     icons.py           Registre ICONS des pictogrammes + icônes custom par path SVG
+    ports.py           Bord d'un port (port_side, port_edge_point) + dessin prise/nom en mode détail
+  export.py            svg_to_png : PNG transparent via resvg-py
   scene/               Rendu de scène
     validation.py      validate_scene_connections
     layout.py          Positions absolues/relatives, chevauchements, encombrement
@@ -50,6 +55,7 @@ renderer/
       router.py        A* longueur + coudes
       nudging.py       Câbles parallèles côte à côte
       draw.py          Tracé SVG (coudes arrondis, prises)
+      labels.py        Nom des câbles : placement libre (ni sur un câble, ni sur une machine)
 tests/                 pytest, indépendants du design des vrais appareils
 devices/<marque>/*.json   Layouts d'appareils (données)
   elektron/digitakt2.json   Digitakt II (215×176 mm, ~68 composants, 10 ports)
@@ -58,7 +64,7 @@ devices/<marque>/*.json   Layouts d'appareils (données)
   roland/tb-3.json          TB-3 (240×173 mm, maquette simplifiée)
 themes/*.json          Thèmes : dark_slate, flat ("Elektron Dark Pro"), outlined_dark, outlined_light
 scenes/*.json          Scènes : nays_2026.json ("Live Rig Principal", 4 appareils, 7 câbles)
-output/*.svg           SVG générés (versionnés, pas forcément à jour ; contient un doublon "… copy.svg")
+output/                Sorties : <machine>/<machine>-<thème>[-detail].svg par machine, scènes à la racine (scene-<nom>-<thème>[-detail].svg|png) ; versionnées
 README.md, JSON.md     Doc utilisateur (FR) : usage CLI / schéma JSON
 requirements*.txt      Dépendances épinglées (runtime / dev)
 pytest.ini             Config pytest
@@ -78,11 +84,13 @@ render_svg(device, theme, out, show_labels)
    └─ draw_device_to_group(dwg, layout, theme, show_labels)
          pour chaque composant : forme selon type + style thème (override fill/stroke composant)
          si show_labels : add_control_legend → texte | icône intégrée | icône custom
+         si show_labels : ports.draw_ports → cercle sur la tranche + nom vers l'intérieur
+cli --png : export.svg_to_png(svg, .png, dpi)
 ```
 
 ### Scène (`cli.py render-scene`)
 ```
-render.load_scene / load_scene_layouts    (chemins device relatifs au CWD, pas au fichier scène)
+render.load_scene / load_scene_layouts    (chemins device relatifs au DOSSIER DU FICHIER DE SCÈNE)
 validation.validate_scene_connections
 layout.resolve_positions                  (absolute | relative en cascade, max 10 passes)
 layout.check_no_overlap                   (erreur si deux machines se superposent)
@@ -93,7 +101,9 @@ cabling.route_cables                      (coordonnées de scène)
    nudging : câbles colinéaires → voies parallèles espacées de spacing_mm
    contrôle : aucun segment ne traverse une machine
 layout.compute_bounds                     (bbox appareils + câbles + padding 20 → taille SVG + offset)
-render : <g translate(offset)> { appareils (<g translate> + fond + draw_device_to_group), câbles }
+render : pas de fond de scène (transparent) ; <g translate(offset)> { appareils (<g translate> + fond appareil
+         + draw_device_to_group [+ ports en détail]), câbles, [noms des câbles en détail] }
+cli --png : export.svg_to_png(svg, .png, dpi)
 ```
 
 Le câblage est entièrement dans `scene/cabling/` et ne connaît pas svgwrite sauf `draw.py`. Les réglages visuels et la distance aux machines viennent du bloc `cables` du thème.

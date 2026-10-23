@@ -1,78 +1,881 @@
 {
-  "name": "Roland JX-08",
   "manufacturer": "Roland",
   "model": "JX-08",
   "physical": {
-    "width_mm": 300.0,
-    "height_mm": 128.0,
-    "depth_mm": 47.0
+    "width_mm": 300,
+    "height_mm": 128,
+    "depth_mm": 47
   },
   "components": [
     {
-      "type": "screen",
+      "type": "frame",
+      "label": "Bottom Strip",
       "x": 0.5,
-      "y": 0.25,
-      "width_mm": 60.0,
-      "height_mm": 20.0
+      "y": 0.7485,
+      "width_mm": 300,
+      "height_mm": 33
     },
     {
-      "type": "encoder",
-      "x": 0.15,
-      "y": 0.65,
-      "diameter_mm": 12.0,
-      "legend": "CUTOFF"
+      "type": "led",
+      "label": "Arp LED",
+      "x": 0.0375,
+      "y": 0.2003,
+      "diameter_mm": 2.5
     },
     {
-      "type": "encoder",
-      "x": 0.30,
-      "y": 0.65,
-      "diameter_mm": 12.0,
-      "legend": "RESO"
+      "type": "led",
+      "label": "Arp LED",
+      "x": 0.0375,
+      "y": 0.3494,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "led",
+      "label": "Arp LED",
+      "x": 0.0375,
+      "y": 0.4956,
+      "diameter_mm": 2.5
     },
     {
       "type": "button",
-      "x": 0.85,
-      "y": 0.65,
-      "width_mm": 15.0,
-      "height_mm": 10.0,
-      "legend": "PATCH"
+      "label": "Arpeggio",
+      "x": 0.0375,
+      "y": 0.2632,
+      "width_mm": 8,
+      "height_mm": 8,
+      "fill": "#ef4444"
+    },
+    {
+      "type": "button",
+      "label": "Note",
+      "x": 0.0375,
+      "y": 0.4108,
+      "width_mm": 8,
+      "height_mm": 8,
+      "fill": "#eab308"
+    },
+    {
+      "type": "button",
+      "label": "Seq",
+      "x": 0.0375,
+      "y": 0.557,
+      "width_mm": 8,
+      "height_mm": 8,
+      "fill": "#3b9be6"
+    },
+    {
+      "type": "encoder",
+      "label": "LFO Rate",
+      "x": 0.0935,
+      "y": 0.2632,
+      "diameter_mm": 9.5
+    },
+    {
+      "type": "encoder",
+      "label": "Delay Time",
+      "x": 0.0935,
+      "y": 0.4167,
+      "diameter_mm": 9.5
+    },
+    {
+      "type": "button",
+      "label": "LFO Waveform Switch",
+      "x": 0.094,
+      "y": 0.5585,
+      "width_mm": 8,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "DCO-1 LFO Slot",
+      "x": 0.1506,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "DCO-1 LFO Cap",
+      "x": 0.1506,
+      "y": 0.4269,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "encoder",
+      "label": "DCO-1 Tune",
+      "x": 0.2,
+      "y": 0.2632,
+      "diameter_mm": 9.5
+    },
+    {
+      "type": "button",
+      "label": "DCO-1 Range Switch",
+      "x": 0.1893,
+      "y": 0.4269,
+      "width_mm": 4.5,
+      "height_mm": 10.5
+    },
+    {
+      "type": "button",
+      "label": "DCO-1 Waveform Switch",
+      "x": 0.2202,
+      "y": 0.4269,
+      "width_mm": 4.5,
+      "height_mm": 10.5
+    },
+    {
+      "type": "button",
+      "label": "Portamento",
+      "x": 0.1518,
+      "y": 0.5585,
+      "width_mm": 6.5,
+      "height_mm": 6.5
+    },
+    {
+      "type": "encoder",
+      "label": "Portamento Time",
+      "x": 0.1994,
+      "y": 0.5585,
+      "diameter_mm": 9.5
+    },
+    {
+      "type": "frame",
+      "label": "DCO-2 LFO Slot",
+      "x": 0.2708,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "DCO-2 LFO Cap",
+      "x": 0.2708,
+      "y": 0.4269,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "encoder",
+      "label": "DCO-2 Tune",
+      "x": 0.3321,
+      "y": 0.2632,
+      "diameter_mm": 9.5
+    },
+    {
+      "type": "encoder",
+      "label": "DCO-2 Fine Tune",
+      "x": 0.3827,
+      "y": 0.2632,
+      "diameter_mm": 9.5
+    },
+    {
+      "type": "button",
+      "label": "DCO-2 Range Switch",
+      "x": 0.3155,
+      "y": 0.4269,
+      "width_mm": 4.5,
+      "height_mm": 10.5
+    },
+    {
+      "type": "button",
+      "label": "DCO-2 Waveform Switch",
+      "x": 0.3482,
+      "y": 0.4269,
+      "width_mm": 4.5,
+      "height_mm": 10.5
+    },
+    {
+      "type": "button",
+      "label": "Cross Mod Switch",
+      "x": 0.3815,
+      "y": 0.4342,
+      "width_mm": 4.5,
+      "height_mm": 10.5
+    },
+    {
+      "type": "encoder",
+      "label": "DCO-1 Env",
+      "x": 0.2708,
+      "y": 0.5585,
+      "diameter_mm": 9.5
+    },
+    {
+      "type": "encoder",
+      "label": "DCO-2 Env",
+      "x": 0.331,
+      "y": 0.5585,
+      "diameter_mm": 9.5
+    },
+    {
+      "type": "button",
+      "label": "DCO Env Mode Switch",
+      "x": 0.3815,
+      "y": 0.5585,
+      "width_mm": 10,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "Mixer DCO-1 Slot",
+      "x": 0.4333,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "Mixer DCO-1 Cap",
+      "x": 0.4333,
+      "y": 0.2617,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "Mixer DCO-2 Slot",
+      "x": 0.4702,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "Mixer DCO-2 Cap",
+      "x": 0.4702,
+      "y": 0.3099,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "encoder",
+      "label": "Mixer Env",
+      "x": 0.4333,
+      "y": 0.5585,
+      "diameter_mm": 9.5
+    },
+    {
+      "type": "button",
+      "label": "Mixer Mode Switch",
+      "x": 0.4821,
+      "y": 0.5585,
+      "width_mm": 4,
+      "height_mm": 4.5
+    },
+    {
+      "type": "frame",
+      "label": "HPF Slot",
+      "x": 0.5226,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "HPF Cap",
+      "x": 0.5226,
+      "y": 0.4269,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "Cutoff Slot",
+      "x": 0.5696,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "Cutoff Cap",
+      "x": 0.5696,
+      "y": 0.2617,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "Resonance Slot",
+      "x": 0.606,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "Resonance Cap",
+      "x": 0.606,
+      "y": 0.4269,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "VCF LFO Slot",
+      "x": 0.6429,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "VCF LFO Cap",
+      "x": 0.6429,
+      "y": 0.4269,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "Key Follow Slot",
+      "x": 0.6792,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "Key Follow Cap",
+      "x": 0.6792,
+      "y": 0.2442,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "encoder",
+      "label": "VCF Env",
+      "x": 0.5696,
+      "y": 0.5585,
+      "diameter_mm": 9.5
+    },
+    {
+      "type": "button",
+      "label": "VCF Mode Switch",
+      "x": 0.625,
+      "y": 0.5585,
+      "width_mm": 10,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "VCA Level Slot",
+      "x": 0.7339,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "VCA Level Cap",
+      "x": 0.7339,
+      "y": 0.2515,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "button",
+      "label": "VCA Mode Switch",
+      "x": 0.7339,
+      "y": 0.5585,
+      "width_mm": 5.5,
+      "height_mm": 4
+    },
+    {
+      "type": "button",
+      "label": "Env Select 1",
+      "x": 0.7857,
+      "y": 0.3143,
+      "width_mm": 6.5,
+      "height_mm": 6.5,
+      "fill": "#ef4444"
+    },
+    {
+      "type": "button",
+      "label": "Env Select 2",
+      "x": 0.7857,
+      "y": 0.4342,
+      "width_mm": 6.5,
+      "height_mm": 6.5
+    },
+    {
+      "type": "frame",
+      "label": "Attack Slot",
+      "x": 0.8232,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "Attack Cap",
+      "x": 0.8232,
+      "y": 0.4269,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "Decay Slot",
+      "x": 0.8601,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "Decay Cap",
+      "x": 0.8601,
+      "y": 0.2617,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "Sustain Slot",
+      "x": 0.897,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "Sustain Cap",
+      "x": 0.897,
+      "y": 0.2617,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "frame",
+      "label": "Release Slot",
+      "x": 0.9333,
+      "y": 0.3465,
+      "width_mm": 5.5,
+      "height_mm": 31.5
+    },
+    {
+      "type": "button",
+      "label": "Release Cap",
+      "x": 0.9333,
+      "y": 0.4269,
+      "width_mm": 6.5,
+      "height_mm": 4
+    },
+    {
+      "type": "button",
+      "label": "Env Key Follow Switch",
+      "x": 0.9643,
+      "y": 0.2617,
+      "width_mm": 4,
+      "height_mm": 11
+    },
+    {
+      "type": "button",
+      "label": "Chorus 1",
+      "x": 0.7869,
+      "y": 0.5541,
+      "width_mm": 6.5,
+      "height_mm": 6.5
+    },
+    {
+      "type": "button",
+      "label": "Chorus 2",
+      "x": 0.8333,
+      "y": 0.5541,
+      "width_mm": 6.5,
+      "height_mm": 6.5
+    },
+    {
+      "type": "button",
+      "label": "Reverb",
+      "x": 0.8786,
+      "y": 0.5541,
+      "width_mm": 6.5,
+      "height_mm": 6.5
+    },
+    {
+      "type": "screw",
+      "label": "Ext Clk In Jack",
+      "x": 0.9631,
+      "y": 0.5541,
+      "diameter_mm": 5
+    },
+    {
+      "type": "button",
+      "label": "Start",
+      "x": 0.0375,
+      "y": 0.7515,
+      "width_mm": 8,
+      "height_mm": 8,
+      "fill": "#3b9be6"
+    },
+    {
+      "type": "button",
+      "label": "Menu",
+      "x": 0.0875,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5
+    },
+    {
+      "type": "encoder",
+      "label": "Value",
+      "x": 0.1375,
+      "y": 0.7515,
+      "diameter_mm": 10
+    },
+    {
+      "type": "screen",
+      "label": "Display",
+      "x": 0.2238,
+      "y": 0.7485,
+      "width_mm": 32,
+      "height_mm": 17
+    },
+    {
+      "type": "led",
+      "label": "Step 1 LED",
+      "x": 0.3065,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 1",
+      "x": 0.3065,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "1"
+    },
+    {
+      "type": "led",
+      "label": "Step 2 LED",
+      "x": 0.3464,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 2",
+      "x": 0.3464,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "2"
+    },
+    {
+      "type": "led",
+      "label": "Step 3 LED",
+      "x": 0.3863,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 3",
+      "x": 0.3863,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "3"
+    },
+    {
+      "type": "led",
+      "label": "Step 4 LED",
+      "x": 0.4262,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 4",
+      "x": 0.4262,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "4"
+    },
+    {
+      "type": "led",
+      "label": "Step 5 LED",
+      "x": 0.4667,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 5",
+      "x": 0.4667,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "5"
+    },
+    {
+      "type": "led",
+      "label": "Step 6 LED",
+      "x": 0.5065,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 6",
+      "x": 0.5065,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "6"
+    },
+    {
+      "type": "led",
+      "label": "Step 7 LED",
+      "x": 0.547,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 7",
+      "x": 0.547,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "7"
+    },
+    {
+      "type": "led",
+      "label": "Step 8 LED",
+      "x": 0.5869,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 8",
+      "x": 0.5869,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "8"
+    },
+    {
+      "type": "led",
+      "label": "Step 9 LED",
+      "x": 0.6274,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 9",
+      "x": 0.6274,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "9"
+    },
+    {
+      "type": "led",
+      "label": "Step 10 LED",
+      "x": 0.6673,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 10",
+      "x": 0.6673,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "10"
+    },
+    {
+      "type": "led",
+      "label": "Step 11 LED",
+      "x": 0.7071,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 11",
+      "x": 0.7071,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "11"
+    },
+    {
+      "type": "led",
+      "label": "Step 12 LED",
+      "x": 0.7476,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 12",
+      "x": 0.7476,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "12"
+    },
+    {
+      "type": "led",
+      "label": "Step 13 LED",
+      "x": 0.7875,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 13",
+      "x": 0.7875,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "13"
+    },
+    {
+      "type": "led",
+      "label": "Step 14 LED",
+      "x": 0.8274,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 14",
+      "x": 0.8274,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "14"
+    },
+    {
+      "type": "led",
+      "label": "Step 15 LED",
+      "x": 0.8673,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 15",
+      "x": 0.8673,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "15"
+    },
+    {
+      "type": "led",
+      "label": "Step 16 LED",
+      "x": 0.9071,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Step 16",
+      "x": 0.9071,
+      "y": 0.7515,
+      "width_mm": 7.5,
+      "height_mm": 7.5,
+      "legend": "16"
+    },
+    {
+      "type": "led",
+      "label": "Manual LED",
+      "x": 0.9536,
+      "y": 0.6857,
+      "diameter_mm": 2.5
+    },
+    {
+      "type": "button",
+      "label": "Manual",
+      "x": 0.9536,
+      "y": 0.7485,
+      "width_mm": 7.5,
+      "height_mm": 7.5
+    },
+    {
+      "type": "logo",
+      "label": "Roland Emblem",
+      "x": 0.8633,
+      "y": 0.0328,
+      "width_mm": 5.79,
+      "height_mm": 3.2,
+      "icon_path_d": "M 219.76 663.25 L 219.50 747.50 L 164.00 748.03 L 164.00 184.00 L 1119.00 184.00 L 1119.00 357.78 L 1115.26 358.48 C1113.20,358.87 966.16,359.08 788.51,358.96 L 785.10 358.95 C482.49,358.74 455.32,358.72 428.52,361.90 C425.77,362.22 423.03,362.58 420.00,362.98 C387.46,367.22 370.22,372.80 351.89,385.00 C297.53,421.19 269.38,481.30 277.54,543.70 C282.38,580.61 297.92,612.67 323.50,638.53 C338.92,654.11 352.77,664.32 370.81,673.40 C383.96,680.02 393.72,682.95 411.04,685.46 C438.85,689.50 438.78,689.50 674.00,689.62 C799.12,689.69 984.64,689.81 1086.27,689.87 L 1271.03 690.00 L 1270.77 718.25 L 1270.50 746.50 L 865.00 747.20 C600.72,747.66 453.23,747.55 441.50,746.91 C421.44,745.80 399.94,742.59 381.77,737.98 C342.65,728.06 304.41,706.26 278.94,679.37 C273.88,674.02 262.27,659.72 255.92,651.00 C245.40,636.57 228.45,601.74 222.95,583.25 C222.25,580.91 221.31,579.00 220.85,579.00 C220.39,579.00 219.90,616.91 219.76,663.25 ZM 88.00 110.00 L 87.50 747.50 L 58.43 747.76 C42.44,747.91 29.06,747.72 28.68,747.35 C28.31,746.97 28.00,590.14 28.00,398.83 L 28.00 51.00 L 548.25 51.01 C884.33,51.01 1072.57,51.37 1080.00,52.01 C1131.43,56.45 1170.65,70.82 1206.15,98.21 C1259.94,139.73 1292.27,210.48 1289.65,281.00 C1288.36,315.88 1280.80,346.30 1266.00,376.18 C1244.92,418.74 1211.25,452.09 1168.80,472.43 C1144.41,484.12 1126.27,488.82 1090.50,492.71 C1077.03,494.17 1043.23,494.37 759.22,494.69 L 442.95 495.05 L 443.03 525.09 C443.08,541.61 443.36,555.78 443.66,556.57 C444.14,557.81 499.41,558.00 857.62,558.00 L 1271.03 558.00 L 1270.77 585.75 L 1270.50 613.50 L 829.25 613.75 L 388.00 614.00 L 388.00 436.83 L 727.75 437.03 C1035.69,437.20 1068.90,437.07 1082.50,435.59 C1112.78,432.30 1125.31,429.37 1140.50,422.02 C1194.77,395.73 1229.42,342.16 1231.71,281.00 C1233.28,238.85 1219.73,199.51 1192.46,167.00 C1182.63,155.29 1172.99,146.70 1158.99,137.20 C1133.10,119.64 1115.12,113.92 1076.60,110.98 C1068.41,110.36 885.86,110.00 575.86,110.00 ZM 221.00 353.67 C221.00,414.38 221.20,463.89 221.45,463.89 L 221.45 463.89 C221.69,463.64 223.96,458.52 226.48,452.50 C244.51,409.46 269.88,374.00 299.30,350.73 C330.85,325.77 367.21,310.92 411.84,304.76 C417.01,304.05 523.66,303.51 740.00,303.10 L 1060.50 302.50 L 1061.03 243.00 L 221.00 243.00 Z",
+      "icon_view_box": [
+        28,
+        51,
+        1262,
+        697
+      ]
+    },
+    {
+      "type": "logo",
+      "label": "Roland Wordmark",
+      "x": 0.9016,
+      "y": 0.0343,
+      "width_mm": 15.6,
+      "height_mm": 3.39,
+      "icon_path_d": [
+        "m192 22.717-3e-3 71.215c0.014 0.012 0.021 3.108 3.123 3.108h8.514c3.104 0 3.097-3.097 3.097-3.097l7e-3 -71.229c0-4e-3 0-3.105-3.104-3.105h-8.514c-3.11 3e-3 -3.11 3.101-3.12 3.108z",
+        "m226.54 80.726c0.057 1.711 1.092 3.644 2.73 4.721 7.812 5.135 28.24 3.12 28.299-11.791 4e-3 -1.128-1.158-1.713-1.963-1.819-1.592-0.208-18.885-0.579-25.896 3.116-2.353 1.234-3.247 3.251-3.17 5.773 0 0-13.93 0.046-13.93 0-0.059-7.937 5.972-15.571 13.881-16.822 5.457-0.866 8.865-1.61 28.895-2.633 1.322-0.062 3.668-2.627 1.941-5.089-2.697-3.833-4.887-5.694-13.207-5.694-7.514 0-11.523 1.547-14.012 5.691-0.473 0.799-2.106 2.174-3.745 2.174l-9.525-0.028c-1.127 0-2.427-1.322-1.974-2.408 4.456-10.754 13.583-16.053 27.559-16.064 12.492-4e-3 28.797 4.625 28.797 22.052l-0.01 32.04c0.01 0 0 3.097-3.096 3.097 0 0-3.938 4e-3 -5.074 0-2.49 0-3.625-0.6-4.424-3.108-0.318-0.993-1.453-1.694-2.439-0.839-8.137 7.08-25.973 8.734-35.584 1.928-5.542-3.929-7.982-9.089-7.982-14.295 0-2e-3 13.929-0.016 13.929-2e-3z",
+        "m339.24 93.937v-31.404c0-14.047-12.393-22.662-21.455-22.662-8.996 0-16.639 2.346-22.539 7.087-0.518 0.426-1.988 0.887-1.988-0.408l-0.02-3.219s-8e-3 -3.102-3.107-3.1l-7.338-2e-3s-3.104 0-3.102 3.088l-8e-3 50.626c6e-3 3.097 3.107 3.104 3.107 3.104l7.348-7e-3c3.092 0 3.092-3.097 3.078-3.108l0.014-24.737c0-6.838 4.621-18.516 19.84-18.516 10.881 0 12.611 7.476 12.611 11.854l0.014 31.41c6e-3 3.101 3.109 3.094 3.109 3.094l7.35 3e-3s3.098 0 3.086-3.103z",
+        "m214.85 55.893c-0.018 0.105-0.029 0.213-0.029 0.321",
+        "m152.04 99.038c24.747 0 35.121-16.011 35.107-29.575-0.019-12.993-10.425-29.6-35.321-29.604-24.87-7e-3 -35.262 16.564-35.262 29.615 0 13.823 10.499 29.564 35.476 29.564v-10.596c-14.479 0-21.105-10.695-21.105-18.894 0-8.192 6.938-19.016 20.898-19.016 13.959 0 20.938 10.759 20.938 18.946 0 8.285-6.829 18.963-20.731 18.963z",
+        "m359.31 69.342c0 10.951 8.088 19.255 18.688 19.251 10.609-4e-3 19.193-7.47 19.162-19.099-0.027-11.261-8.574-18.518-19.174-18.518-9.897 1e-3 -18.684 7.551-18.676 18.366l-13.938-0.019c-0.053-22.616 30.334-37.896 50.33-22.628 0.908 0.695 1.773 0.143 1.795-1.485l-0.014-22.489c0.023-3.112 3.127-3.106 3.127-3.106h7.35s3.088-2e-3 3.088 3.096v71.222c0 3.108-3.08 3.108-3.08 3.108h-7.357c-3.092 0-3.107-3.097-3.104-3.332 0.012-1.628-0.91-2.198-1.805-1.488-20.305 16.037-50.271 2.4-50.33-22.896z",
+        "m60.187 62.19 3e-3 -10.268c0.169-4e-3 -3.097-4e-3 -3.097-3.1-0.011-3.797 0-15.876 0-15.876s0-3.096 3.097-3.096h27.488s12.088 0.021 12.096 11.039c7e-3 11.052-12.096 11.028-12.096 11.025l-27.488 9e-3v10.268l23.03-5e-3c4.072 0 7.552 0.916 9.127 3.101 6.704 9.306 4.49 18.815 7.705 28.625 0.568 1.724 2.172 3.116 5.115 3.116l8.987-0.021c0.844 7e-3 1.472-1.143 1.222-1.677-3.707-7.849-4.001-16.025-6.444-25.395-1.35-5.188-1.393-7.661-5.236-10.679-0.214-0.166 0.136-0.763 0.586-1.075 5.608-3.921 9.602-10.315 9.602-17.294 0-14.273-11.63-21.298-21.807-21.293l-45.056 6e-3s-3.098 0-3.098 3.09l-0.011 71.221c0.015 3.133 3.129 3.107 3.129 3.107l6.955-5e-3s3.097 5e-3 3.097-3.103c0-5.062-0.021-21.448-7e-3 -28.632 7e-3 -3.096 3.101-3.088 3.101-3.088z"
+      ],
+      "icon_view_box": [
+        43.912,
+        19.594,
+        367.13,
+        79.758
+      ]
+    },
+    {
+      "type": "text",
+      "label": "Model Name",
+      "legend": "JX-08",
+      "x": 0.8538,
+      "y": 0.0819,
+      "text_anchor": "start",
+      "legend_bold": true,
+      "legend_font_size_mm": 9.5,
+      "width_mm": 38.5
+    },
+    {
+      "type": "text",
+      "label": "Model Subtitle",
+      "legend": "POLYPHONIC SYNTHESIZER",
+      "x": 0.8538,
+      "y": 0.122,
+      "text_anchor": "start",
+      "legend_bold": true,
+      "legend_font_size_mm": 2.1,
+      "width_mm": 33.0,
+      "legend_color": "#c8302c",
+      "detail_only": true
     }
   ],
-"ports": [
-    {
-      "id": "midi-in",
-      "label": "MIDI In",
-      "direction": "input",
-      "signal": "midi",
-      "connector": "5-pin DIN",
-      "x": 0.36,
-      "y": 0.0
-    },
-    {
-      "id": "midi-out",
-      "label": "MIDI Out",
-      "direction": "output",
-      "signal": "midi",
-      "connector": "5-pin DIN",
-      "x": 0.43,
-      "y": 0.0
-    },
+  "ports": [
     {
       "id": "mix-in",
       "label": "Mix In",
       "direction": "input",
       "signal": "audio",
-      "connector": "6.35mm jack",
-      "x": 0.58,
-      "y": 0.0
-    },
-    {
-      "id": "audio-out",
-      "label": "Output",
-      "direction": "output",
-      "signal": "audio",
-      "connector": "6.35mm jack",
-      "x": 0.64,
+      "connector": "3.5mm TRS jack",
+      "channels": 2,
+      "x": 0.3,
       "y": 0.0
     },
     {
@@ -80,8 +883,37 @@
       "label": "Phones",
       "direction": "output",
       "signal": "audio",
-      "connector": "6.35mm jack",
-      "x": 0.70,
+      "connector": "3.5mm TRS jack",
+      "channels": 2,
+      "x": 0.38,
+      "y": 0.0
+    },
+    {
+      "id": "output",
+      "label": "Output",
+      "direction": "output",
+      "signal": "audio",
+      "connector": "3.5mm TRS jack",
+      "channels": 2,
+      "x": 0.46,
+      "y": 0.0
+    },
+    {
+      "id": "midi-in",
+      "label": "MIDI In",
+      "direction": "input",
+      "signal": "midi",
+      "connector": "DIN 5",
+      "x": 0.56,
+      "y": 0.0
+    },
+    {
+      "id": "midi-out",
+      "label": "MIDI Out",
+      "direction": "output",
+      "signal": "midi",
+      "connector": "DIN 5",
+      "x": 0.66,
       "y": 0.0
     },
     {
@@ -90,17 +922,25 @@
       "direction": "bidirectional",
       "signal": "usb",
       "connector": "USB-C",
-      "x": 0.81,
+      "capabilities": [
+        "audio",
+        "midi",
+        "bus power"
+      ],
+      "x": 0.8,
       "y": 0.0
     },
     {
-      "id": "power",
-      "label": "Power",
+      "id": "ext-clk-in",
+      "label": "Ext Clk In",
       "direction": "input",
-      "signal": "power",
-      "connector": "Switch",
-      "x": 0.87,
-      "y": 0.0
+      "signal": "audio",
+      "connector": "3.5mm TS jack",
+      "capabilities": [
+        "clock"
+      ],
+      "x": 0.9631,
+      "y": 0.5541
     }
   ]
 }

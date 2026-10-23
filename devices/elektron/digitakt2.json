@@ -10,10 +10,14 @@
     {
       "type": "frame",
       "label": "Screen Frame",
-      "legend": "Digitakt II",
+      "legend_spans": [
+        {"text": "Digitakt", "weight": 700},
+        {"text": " II", "weight": 200, "font_family": "Helvetica Neue, Segoe UI, Arial, sans-serif"}
+      ],
+      "font_family": "Helvetica Neue, Arial, sans-serif",
+      "legend_always": true,
       "legend_position": "bottom_left",
       "legend_font_size_mm": 5.5,
-      "legend_bold": true,
       "x": 0.318,
       "y": 0.270,
       "width_mm": 73.5,

@@ -9,7 +9,7 @@
 
 ## Style Python
 
-- Python 3.11, indentation 4 espaces, `snake_case` fonctions/variables, `PascalCase` classes, `UPPER_CASE` constantes module (`THEMES_DIR`).
+- Python 3.13, indentation 4 espaces, `snake_case` fonctions/variables, `PascalCase` classes, `UPPER_CASE` constantes module (`THEMES_DIR`).
 - Annotations de type sur les signatures (`typing.Optional/List/Tuple/Literal/Union/Mapping`, pas la syntaxe `X | None`).
 - Imports explicites des formes svgwrite (`from svgwrite.shapes import Rect, Circle`) plutôt que `dwg.rect(...)` (convention du code actuel).
 - Fonctions de dessin : signature `(dwg_ou_groupe, objet, …, center_x, center_y, …, color)` ; elles **ajoutent** au conteneur passé, ne retournent rien.
@@ -35,7 +35,7 @@
 
 ## Tests
 
-- Lancer : `./venv/bin/python.exe -m pytest` (installer avec `pip install -r requirements-dev.txt`).
+- Lancer : `./venv/Scripts/python.exe -m pytest` (installer avec `pip install -r requirements-dev.txt`).
 - **Ne pas figer le design** : pas de comparaison avec les SVG réels du Digitakt / Octatrack / Roland (designs en v0, retouchés à la fin). Tester la logique (modèles, validation, positions, câbles) et la bonne formation du SVG sur des données de test construites dans `tests/conftest.py`.
 - Chaque nouvelle logique (règle de validation, ancre, routage…) arrive avec son test.
 - Refactor sans changement de rendu attendu : capturer les SVG avant (tous appareils × thèmes × `--detail`, + scène) dans le scratchpad et comparer après (`diff -rq`), sans les commiter.
@@ -63,5 +63,5 @@
 
 - Dépendances : ajouter toute nouvelle lib à `requirements.txt` (ou `requirements-dev.txt` si outil de dev) avec version épinglée. Ne jamais versionner `venv/` ni `__pycache__/`.
 - Avant de commiter : `pytest` vert.
-- Vérifier un changement en régénérant : `PYTHONIOENCODING=utf-8 ./venv/bin/python.exe cli.py render devices/elektron/digitakt2.json -t flat --detail` et `… render-scene scenes/nays_2026.json -t flat`.
+- Vérifier un changement en régénérant : `PYTHONIOENCODING=utf-8 ./venv/Scripts/python.exe cli.py render devices/elektron/digitakt2.json -t flat --detail` et `… render-scene scenes/nays_2026.json -t flat`.
 - **Mettre à jour `doc/`** (et `JSON.md` si le schéma change) à chaque évolution d'architecture, ajout de fonction majeure ou changement de règle. Mettre à jour la date « Màj » en tête de fichier.

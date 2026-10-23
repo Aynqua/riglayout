@@ -1,13 +1,9 @@
 """Primitives géométriques du câblage (coordonnées de scène, en mm, y vers le bas)."""
 from typing import Iterable, List, NamedTuple, Tuple
 
-Point = Tuple[float, float]
-Direction = Tuple[int, int]
+from renderer.device.ports import DOWN, LEFT, RIGHT, UP, Direction
 
-UP: Direction = (0, -1)
-DOWN: Direction = (0, 1)
-LEFT: Direction = (-1, 0)
-RIGHT: Direction = (1, 0)
+Point = Tuple[float, float]
 DIRECTIONS = (UP, DOWN, LEFT, RIGHT)
 
 EPS = 1e-6

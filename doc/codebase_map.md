@@ -11,6 +11,9 @@
 | Ajouter / modifier une icône intégrée | `renderer/device/icons.py` (registre `ICONS`) |
 | Légendes : couleur, taille, position du texte | `renderer/device/legends.py` |
 | Forme d'un composant | `renderer/device/draw.py` |
+| Ports d'un appareil (bord, prise, nom) | `renderer/device/ports.py` + bloc `ports` du thème |
+| Export PNG | `renderer/export.py` + options `--png` / `--dpi` de `cli.py` |
+| Noms de fichiers de sortie | `cli.default_output_path` |
 | Format d'une scène (positions, connexions) | `renderer/models/scene.py` |
 | Règles de connexion (sens, signal, port unique) | `renderer/scene/validation.py` |
 | Placement des appareils, chevauchements, taille de la scène | `renderer/scene/layout.py` |
@@ -19,8 +22,9 @@
 | Choix du trajet (longueur, coudes) | `renderer/scene/cabling/router.py` |
 | Écartement des câbles parallèles, ordre des voies | `renderer/scene/cabling/nudging.py` |
 | Aspect SVG d'un câble (coudes, prises) | `renderer/scene/cabling/draw.py` |
+| Placement du nom d'un câble | `renderer/scene/cabling/labels.py` |
 | Couleurs / épaisseur / espacement des câbles | `themes/*.json` → bloc `cables` (`CableStyle` dans `models/theme.py`) |
-| Orchestration du rendu de scène, fond | `renderer/scene/render.py` |
+| Orchestration du rendu de scène, chargement des layouts | `renderer/scene/render.py` |
 | Options CLI | `cli.py` |
 
 Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` ← `scene` ← `cli`.
@@ -34,8 +38,10 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 | `available_themes()` | `[(Path, name)]` triés, `name` lu dans le JSON (fallback `stem`) |
 | `select_theme(opt)` | `opt` = chemin existant → ce chemin ; sinon match insensible à la casse sur `stem`, `name` de fichier ou `name` du thème ; `None` → prompt interactif numéroté. Erreurs → `typer.BadParameter` |
 | `slugify(s)` | ASCII, minuscules, `-` — sert aux noms de sortie auto |
-| `render(device_path, --theme/-t, --output/-o, --labels/--no-labels, --detail)` | Sortie défaut : `output/<slug(manufacturer-model)>-<slug(theme.name)>.svg` |
-| `render_scene(scene_path, --theme/-t, --output/-o, --labels, --detail)` | Sortie défaut : `output/scene-<slug(stem)>.svg`. `show_labels = labels or detail` |
+| `default_output_path(name, theme, detail, in_own_folder=False)` | `<slug(name)>-<slug(theme.name)>[-detail].svg` dans `output/` (scènes) ou `output/<slug(name)>/` (machines : `in_own_folder=True`) — un fichier par thème et par mode |
+| `export_png(svg_path, dpi)` | `.png` à côté du SVG via `renderer.export.svg_to_png` |
+| `render(device_path, --theme/-t, --output/-o, --labels/--no-labels, --detail, --png, --dpi)` | Nom : `default_output_path("<manufacturer>-<model>", …)` |
+| `render_scene(scene_path, --theme/-t, --output/-o, --labels, --detail, --png, --dpi)` | Nom : `default_output_path("scene-<stem>", …)`. `show_labels = labels or detail` |
 
 ## `renderer/models/` — Modèles pydantic v1 (aucune dépendance au rendu)
 
@@ -43,18 +49,21 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 
 ### `models/device.py`
 - `PhysicalDimensions` : `width_mm`, `height_mm` (>0, requis), `depth_mm` (opt).
-- `BaseComponent` (commun) : `x`, `y` ∈ [0,1] ; `label`, `legend`, `icon`, `icon_path_d`, `icon_view_box (x,y,w,h)`, `icon_fill_rule` (`nonzero|evenodd`), `icon_mode` (`fill|stroke`), `fill`, `stroke`, `legend_color`, `legend_position` (`center|bottom_left`), `legend_bold`, `legend_font_size_mm`, `underline`.
+- `BaseComponent` (commun) : `x`, `y` ∈ [0,1] ; `label`, `legend`, `icon`, `icon_path_d`, `icon_view_box (x,y,w,h)`, `icon_fill_rule` (`nonzero|evenodd`), `icon_mode` (`fill|stroke`), `icon_stroke_width` (unités du view_box, mode stroke), `icon_linecap` (`round|butt|square`), `fill`, `stroke`, `legend_color`, `legend_position` (`center|bottom_left`), `legend_bold`, `legend_font_size_mm`, `legend_always` (légende visible hors détail : nom/marque imprimés), `legend_spans: List[TextSpan]` (morceaux stylés ; `root_validator(pre=True)` remplit `legend` par concaténation), `font_family`, `underline`.
+- `TextSpan` : `text`, `weight` (100–900), `font_family?`, `color?`, `font_size_mm?`.
   - `root_validator validate_custom_icon` : `icon_path_d` et `icon_view_box` ensemble ; viewBox w/h > 0.
 - Sous-types (champ `type` Literal) :
   - `EncoderComponent` (`diameter_mm`, `variant` inutilisé), `LEDComponent`, `ScrewComponent` → `diameter_mm`
   - `ButtonComponent` (`width_mm`, `height_mm`, `shape` inutilisé), `ScreenComponent`, `PadComponent`, `FrameComponent` → `width_mm`, `height_mm`
   - `LogoComponent` → `width_mm`, `height_mm` + validator : `icon_path_d`/`icon_view_box` obligatoires.
+  - `TextComponent` → inscription imprimée **toujours visible** : `legend` requis (ou `legend_spans`), `text_anchor` (`start|middle|end`), `width_mm?` (→ `textLength`), `detail_only` (dessiné seulement avec `show_labels`).
 - `DevicePort` : `id`, `label`, `direction` (`input|output|bidirectional`), `signal` (`audio|midi|usb|power`), `connector`, `channels`, `balanced`, `voltage_v`, `current_a`, `capabilities: List[str]`, `x` (déf. 0.5), `y` (déf. 1.0).
 - `Component = Union[...]`, `DeviceLayout` : `manufacturer`, `model`, `physical`, `components=[]`, `ports=[]`.
 
 ### `models/theme.py`
 - `ComponentStyle` : `fill` (requis), `stroke="none"`, `stroke_width=0`, `rx=0`, `indicator_color` (inutilisé).
 - `LabelStyle` : `fill=None` (→ couleur auto), `font_family="sans-serif"`, `font_size_mm=2.5`.
+- `PortStyle` (`theme.ports`) : `fill=None` (→ `label_color`), `marker_radius_mm=1.0`, `stroke_width_mm=0.3`, `font_size_mm=1.6`, `label_gap_mm=0.8`.
 - `CableColors` : `audio`, `midi`, `usb`, `power` (chacune avec défaut → surcharge partielle possible).
 - `CableStyle` : `width_mm=1.2`, `spacing_mm=2.2` (validator : ≥ `width_mm`), `clearance_mm=6`, `corner_radius_mm=1.5`, `opacity=0.95`, `colors`.
 - `Theme` : `name`, `background: Dict[str, Any]` (clés lues : `fill`, `stroke`, `stroke_width`, `rx`), `components: Dict[type, ComponentStyle]`, `labels`, `cables: CableStyle` (défaut si absent).
@@ -69,7 +78,7 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 ### `device/draw.py`
 | Fonction | Rôle |
 |---|---|
-| `draw_device_to_group(container, layout, theme, show_labels)` | **Moteur partagé** appareil/scène. Coordonnées locales en mm (0,0 = coin haut-gauche). `logo` toujours dessiné (couleur `fill` ou `label_color`). Type sans style thème → ignoré. `screen/button/pad/frame` → `Rect` centré ; `encoder/led/screw` → `Circle` |
+| `draw_device_to_group(container, layout, theme, show_labels)` | **Moteur partagé** appareil/scène. Légendes dessinées si `show_labels` **ou** `comp.legend_always` ; composants `text` toujours. Coordonnées locales en mm (0,0 = coin haut-gauche). `logo` toujours dessiné (couleur `fill` ou `label_color`). Type sans style thème → ignoré. `screen/button/pad/frame` → `Rect` centré ; `encoder/led/screw` → `Circle` |
 | `render_svg(device, theme, path, show_labels)` | SVG d'un appareil : fond (`background`, rx défaut 0) + `draw_device_to_group` + `save()` |
 
 ### `device/legends.py`
@@ -77,14 +86,27 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 |---|---|
 | `label_color(theme)` | `labels.fill` sinon : fond `none` → `background.stroke` ; sinon luminance du fond → `#111111` ou `#ffffff` |
 | `default_control_font_size(comp, theme)` | `legend_font_size_mm` sinon min(thème, taille qui tient en largeur ≈ `0.62·len` et 55 % de la hauteur) |
+| `legend_text(comp, theme, insert, anchor, size, color, bold, **attrs)` | **Fabrique unique des `<text>` de légende** : texte simple, ou un `<tspan>` par `legend_spans` (+ `xml:space="preserve"`, sinon l'espace de tête d'un morceau disparaît). Police = `comp.font_family` ou thème |
+| `add_printed_text(dwg, comp, theme, x, y)` | Composant `text` : `<text class="printed-text">`, toujours dessiné (appelé avant tout le reste dans `_draw_components`) |
 | `add_control_legend(dwg, comp, theme, cx, cy)` | `frame` : texte `center` ou `bottom_left`. `button`/`pad` : priorité **icon_path_d > icon > legend** ; légende bold forcé pour `button` ; `underline` = `Line`. Autres types (encoder…) : **rien** |
+
+### `device/ports.py`
+| Symbole | Rôle |
+|---|---|
+| `UP/DOWN/LEFT/RIGHT`, `Direction` | Directions SVG (y vers le bas) — **source unique**, réutilisée par `scene/cabling/geometry.py` |
+| `port_side(port)` | Bord le plus proche de (x, y) normalisés ; égalité : haut > bas > gauche > droite |
+| `port_edge_point(port, w, h)` | Port projeté sur la tranche, coordonnées locales |
+| `draw_ports(container, layout, theme)` | Mode détail : cercle `class="port"` sur la tranche + `<text class="port-label">` (`port.label`) écrit vers l'intérieur (tourné ±90° sur les bords haut/bas) |
+
+### `renderer/export.py`
+`svg_to_png(svg_path, png_path, dpi=300)` : `resvg_py.svg_to_bytes(svg_path=…, dpi=…)` → PNG RGBA transparent ; taille px = mm / 25.4 × dpi.
 
 ### `device/icons.py`
 | Symbole | Rôle |
 |---|---|
 | `ICONS: Dict[str, IconDrawer]` | **Registre** nom → `draw_xxx(dwg, center_x, center_y, width, height, color)` |
 | `add_control_icon(dwg, icon, cx, cy, w, h, color)` | Cherche dans `ICONS` ; inconnu → `ValueError` |
-| `draw_custom_icon(dwg, d, view_box, cx, cy, w, h, color, fill_rule, mode)` | Centre et met à l'échelle (contain) un path SVG ; `mode=stroke` → trait = 6 % de min(w,h) |
+| `draw_custom_icon(dwg, d (str ou liste : un `<path>` par élément), view_box, cx, cy, w, h, color, fill_rule, mode, stroke_width_view)` | Centre et met à l'échelle (contain) un path SVG. `mode=stroke` : trait = `stroke_width_view` (unités du view_box) ou 6 % de min(w,h) en mm. `Path(debug=False)` : le validateur svgwrite rejette la notation compacte des arcs |
 | `draw_device_logo(dwg, logo, cx, cy, color)` | Wrapper → `draw_custom_icon` |
 | `draw_perform/save_project/samples/metronome` | Paths importés d'un SVG source, recentrés par `_source_group(source_box, …)` (échelle 55 %) |
 | `draw_play/stop` | Paths outline 16×16 / 14×14 via `_draw_transport_path` |
@@ -118,25 +140,26 @@ Pipeline (`__init__.route_cables`) : ancrage des ports → contrôle des prises 
 | `__init__.route_cables(scene, layouts, rects, style)` | Pipeline complet. Erreurs : prises à la même position (`_check_distinct_plugs`), port trop près d'un autre appareil (sortie dans une zone interdite), aucun chemin, câble qui traverserait un appareil (`_check_no_device_crossing`, garde-fou) |
 | `__init__.draw_cables(container, routes, style)` | Couleur = `style.colors.<signal du port source>` |
 | `geometry.py` | `Point`, `Direction` (`UP/DOWN/LEFT/RIGHT`, y vers le bas), `Box` (`from_rect`, `inflate`, `contains_strict`, `overlaps`), `segment_crosses_box`, `simplify` (supprime doublons + points alignés), `EPS` |
-| `anchors.port_side(port)` | Bord le plus proche de (x, y) normalisés ; égalité : haut > bas > gauche > droite |
+| `anchors.port_side` | Réexport de `device.ports.port_side` |
 | `anchors.port_anchor(port, box, clearance) -> PortAnchor(point, direction, exit)` | Port projeté sur la tranche ; `exit` = point à `clearance` du bord, départ du routage |
 | `grid.RoutingGrid(obstacles, waypoints, frame_margin)` | Lignes = bords des boîtes gonflées de `clearance`, milieux entre lignes d'obstacles (couloirs centrés), points de sortie, cadre extérieur. `is_free(node)`, `step(node, dir)` (None si l'arête entre dans une zone interdite), `blocking_obstacle(point)` ; caches par instance |
 | `router.find_route(grid, start, start_dir, goal, goal_dir)` | A* sur états (nœud, direction) ; coût = longueur + `BEND_PENALTY_MM` (12) par coude, pas de demi-tour ; arrivée pénalisée si pas dans l'axe du port |
-| `nudging.nudge_routes(routes, boxes, spacing, width)` | Segments colinéaires qui se recouvrent → voies parallèles. Premier/dernier segment (sortie de port) **fixes**. Ordre des voies : `_Ordering.compare` (celui qui quitte le couloir le premier se place du côté où il tourne ; à coude identique, regarde le couloir suivant avec inversion d'ordre pour (lo,-1) et (hi,+1)). Place disponible mesurée jusqu'aux appareils (`_free_space`) ; espacement compressé si nécessaire (`_lane_offsets`). Coudes recalculés par intersection (`_rebuild`) |
+| `nudging.nudge_routes(routes, boxes, spacing, width)` | Segments colinéaires qui se recouvrent → voies parallèles. Premier/dernier segment (sortie de port) **fixes**. Ordre des voies : `_Ordering.compare` (celui qui quitte le couloir le premier se place du côté où il tourne ; à coude identique, regarde le couloir suivant avec inversion d'ordre pour (lo,-1) et (hi,+1)). Place disponible mesurée jusqu'aux appareils (`_free_space`) ; `_lane_offsets` garde chaque voie à `clearance` des machines (groupe repoussé vers l'extérieur), sinon se contente de ne pas les toucher, et en dernier recours resserre l'espacement. Coudes recalculés par intersection (`_rebuild`) |
 | `draw.rounded_path(points, radius)` | Path SVG avec coudes arrondis (`Q`) |
 | `draw.draw_cable(container, points, color, signal, style)` | `<g class="cable cable-<signal>">` : tracé + pastille de prise à chaque bout |
+| `labels.place_label(points, text, other_routes, device_boxes, style)` | Segments du plus long au plus court, positions du milieu vers les bouts (pas `SLIDE_STEP_MM`=2), côtés -1 puis +1 ; refuse toute boîte de texte qui touche un autre câble ou une machine ; à défaut milieu du plus long segment. Largeur texte estimée `len × taille × 0.6` |
+| `labels.draw_cable_label(...)`, `__init__.draw_cable_labels(container, routes, theme, rects)` | Mode détail : `<text class="cable-label">` couleur du câble, `cables.label_font_size_mm` |
 
 ### `scene/render.py`
 | Symbole | Rôle |
 |---|---|
-| `SCENE_BACKGROUND = "#111111"` | Fond de scène (ne dépend pas du thème) |
 | `SCENE_PADDING_MM = 20` | Marge autour de la scène |
-| `load_scene(path)`, `load_scene_layouts(scene)` | Chargement JSON ; chemins `device` relatifs au **CWD** |
-| `render_scene_svg(scene_path, output_path, theme, padding_mm=20, show_labels=False)` | load → scène vide = `ValueError` → validate → resolve_positions → check_no_overlap → route_cables → compute_bounds → fond → `<g translate(offset)>` contenant les appareils (`<g class="device" id="device-<id>">`) puis les câbles → `save()` + `print` taille |
+| `load_scene(path)`, `load_scene_layouts(scene, base_dir)` | Chargement JSON ; chemins `device` relatifs à `base_dir` = **dossier du fichier de scène** ; absent → `ValueError` « Layout introuvable » |
+| `render_scene_svg(scene_path, output_path, theme, padding_mm=20, show_labels=False)` | load → scène vide = `ValueError` → validate → resolve_positions → check_no_overlap → route_cables → compute_bounds → **aucun fond** (transparent) → `<g translate(offset)>` contenant les appareils (`<g class="device" id="device-<id>">`, ports si détail) puis les câbles puis leurs noms (détail) → `save()` + `print` taille |
 
 `cli.py render-scene` attrape les `ValueError` (dont `ValidationError` pydantic) → message `❌ Scène invalide : …` et code de sortie 1.
 
-## `tests/` — pytest (`./venv/bin/python.exe -m pytest`)
+## `tests/` — pytest (`./venv/Scripts/python.exe -m pytest`)
 
 Indépendants du design des vrais appareils : pas de comparaison de SVG figés.
 
@@ -146,9 +169,9 @@ Indépendants du design des vrais appareils : pas de comparaison de SVG figés.
 | `test_models.py` | Défauts, validations, enums fermés ; tous les `devices/` et `themes/` du projet se chargent |
 | `test_scene_validation.py` | Connexions valides / invalides, doublons |
 | `test_scene_layout.py` | Ancres relatives, cascade, cycles, bbox |
-| `test_render.py` | Chaque icône dessine, icône inconnue, rendu complet × thèmes, légendes seulement en `--detail`, vrais appareils rendent sans erreur, scène (taille, 1 câble par connexion, couleurs du thème), `--detail` en scène |
+| `test_render.py` | Chaque icône dessine, icône inconnue, rendu complet × thèmes, légendes seulement en `--detail`, vrais appareils rendent sans erreur, scène (taille, 1 câble par connexion, couleurs du thème), scène lancée depuis un autre dossier, fond transparent, layout introuvable, ports en détail, noms de câbles, PNG (taille par dpi, RGBA) |
 | `test_cabling.py` | `assert_cabling_is_realistic` (orthogonal, ne traverse aucun appareil, sort perpendiculairement au port, aucun couple de segments parallèles à moins de `spacing_mm`) sur : câbles parallèles, mur à contourner, ports sur les 4 côtés, scène `nays_2026`. Erreurs : chevauchement, port utilisé 2×, prises à la même position, port bloqué. Thème `cables` |
-| `test_cli.py` | `slugify`, `select_theme` |
+| `test_cli.py` | `slugify`, `select_theme`, `default_output_path` (suffixe `-detail`) |
 
 ## Données
 

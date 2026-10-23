@@ -1,9 +1,9 @@
 {
-    "name": "Live Rig Principal",
+    "name": "nays_2026",
     "devices": [
         {
             "id": "digitakt",
-            "device": "devices/elektron/digitakt2.json",
+            "device": "../devices/elektron/digitakt2.json",
             "position": {
                 "type": "absolute",
                 "x": 0.0,
@@ -12,7 +12,7 @@
         },
         {
             "id": "octatrack",
-            "device": "devices/elektron/octatrack2.json",
+            "device": "../devices/elektron/octatrack2.json",
             "position": {
                 "type": "relative",
                 "anchor": "right",
@@ -22,20 +22,21 @@
         },
         {
             "id": "jx08",
-            "device": "devices/roland/jx-08.json",
+            "device": "../devices/roland/jx-08.json",
             "position": {
                 "type": "absolute",
                 "x": 0.0,
-                "y": -173.0
+                "y": -203.0
             }
         },
         {
             "id": "tb3",
-            "device": "devices/roland/tb-3.json",
+            "device": "../devices/roland/tb-3.json",
             "position": {
-                "type": "absolute",
-                "x": 325.0,
-                "y": -200.0
+                "type": "relative",
+                "anchor": "right",
+                "target": "jx08",
+                "spacing_mm": 25.0
             }
         }
     ],
@@ -93,7 +94,7 @@
         {
             "source": {
                 "device_id": "jx08",
-                "port_id": "audio-out"
+                "port_id": "output"
             },
             "target": {
                 "device_id": "octatrack",
@@ -103,7 +104,7 @@
         {
             "source": {
                 "device_id": "tb3",
-                "port_id": "audio-out"
+                "port_id": "out-l"
             },
             "target": {
                 "device_id": "octatrack",

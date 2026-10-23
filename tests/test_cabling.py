@@ -118,10 +118,10 @@ def test_port_side_detection(x, y, expected):
     assert port_side(DevicePort(**port("p", "input", x=x, y=y))) == expected
 
 
-def test_project_scene_cabling(monkeypatch):
-    monkeypatch.chdir(ROOT)
-    scene = load_scene("scenes/nays_2026.json")
-    layouts = load_scene_layouts(scene)
+def test_project_scene_cabling():
+    scene_path = ROOT / "scenes" / "nays_2026.json"
+    scene = load_scene(scene_path)
+    layouts = load_scene_layouts(scene, scene_path.parent)
     routes, rects = route(scene, layouts)
     assert len(routes) == len(scene.connections)
     assert_cabling_is_realistic(routes, rects, layouts)
@@ -185,3 +185,50 @@ def test_spacing_smaller_than_width_is_rejected():
 def test_project_themes_define_cables():
     for path in sorted((ROOT / "themes").glob("*.json")):
         assert "cables" in json.loads(path.read_text(encoding="utf-8")), path.name
+
+
+def test_cable_label_avoids_neighbour_cables_and_devices():
+    from renderer.scene.cabling.labels import place_label
+    cable = [(0, 0), (0, -3), (100, -3), (100, 0)]
+    neighbour = [(-10, 0), (-10, -5.2), (80, -5.2), (80, 0)]    # longe le câble à 2.2 mm jusqu'à x = 80
+    device = Box(-20, 0, 120, 50)                              # juste sous le câble
+    placement = place_label(cable, "MIDI Clock", [neighbour], [device], STYLE)
+    assert placement.insert[0] > 80, "le nom doit glisser là où le voisin ne passe plus"
+    assert placement.insert[1] < -3, "et rester du côté opposé à la machine"
+
+
+def _distance_segment_box(a, b, box):
+    """Distance minimale entre un segment orthogonal et une boîte (0 si contact)."""
+    x1, x2 = sorted((a[0], b[0]))
+    y1, y2 = sorted((a[1], b[1]))
+    dx = max(box.x1 - x2, x1 - box.x2, 0)
+    dy = max(box.y1 - y2, y1 - box.y2, 0)
+    return (dx ** 2 + dy ** 2) ** 0.5
+
+
+def assert_lanes_keep_clearance(routes, rects, style=STYLE):
+    boxes = [Box.from_rect(r) for r in rects.values()]
+    for cable in routes:
+        inner = list(zip(cable.points, cable.points[1:]))[1:-1]   # hors segments de sortie de port
+        for a, b in inner:
+            for box in boxes:
+                assert _distance_segment_box(a, b, box) >= style.clearance_mm - 1e-6, (
+                    f"{cable.connection.source.port_id} passe à moins de {style.clearance_mm} mm d'une machine"
+                )
+
+
+def test_parallel_lanes_keep_clearance():
+    ports_out = [port(f"o{i}", "output", "audio", x=0.1 + i * 0.1, y=0.0) for i in range(5)]
+    ports_in = [port(f"i{i}", "input", "audio", x=0.1 + i * 0.1, y=0.0) for i in range(5)]
+    layouts = {"a": device(ports_out), "b": device(ports_in)}
+    scene = scene_of({"a": (0, 0), "b": (150, 0)}, [("a", f"o{i}", "b", f"i{i}") for i in range(5)])
+    routes, rects = route(scene, layouts)
+    assert_lanes_keep_clearance(routes, rects)
+
+
+def test_project_scene_lanes_keep_clearance():
+    scene_path = ROOT / "scenes" / "nays_2026.json"
+    scene = load_scene(scene_path)
+    layouts = load_scene_layouts(scene, scene_path.parent)
+    routes, rects = route(scene, layouts)
+    assert_lanes_keep_clearance(routes, rects)

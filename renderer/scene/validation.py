@@ -51,8 +51,14 @@ def validate_scene_connections(
             (port for port in target_layout.ports if port.id == connection.target.port_id),
             None
         )
-        if source_port is None or target_port is None:
-            raise ValueError("Une connexion référence un port inconnu")
+        for port, endpoint, layout in ((source_port, connection.source, source_layout),
+                                       (target_port, connection.target, target_layout)):
+            if port is None:
+                available = ", ".join(p.id for p in layout.ports) or "aucun"
+                raise ValueError(
+                    f"Une connexion référence un port inconnu : '{endpoint.port_id}' sur '{endpoint.device_id}' "
+                    f"(ports disponibles : {available})"
+                )
         if source_port.direction not in ("output", "bidirectional"):
             raise ValueError(f"Le port source '{source_port.id}' doit être une sortie")
         if target_port.direction not in ("input", "bidirectional"):

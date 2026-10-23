@@ -6,23 +6,43 @@ class PhysicalDimensions(BaseModel):
     height_mm: float = Field(..., gt=0, description="Hauteur totale en mm")
     depth_mm: Optional[float] = Field(None, gt=0, description="Profondeur en mm")
 
+class TextSpan(BaseModel):
+    """Morceau d'une légende avec son propre style (ex. « Digitakt » gras + « II » fin)."""
+    text: str = Field(..., min_length=1)
+    weight: Optional[int] = Field(None, ge=100, le=900, description="Graisse CSS : 100 (très fin) à 900 (très gras)")
+    font_family: Optional[str] = None
+    color: Optional[str] = None
+    font_size_mm: Optional[float] = Field(None, gt=0)
+
 class BaseComponent(BaseModel):
     x: float = Field(..., ge=0.0, le=1.0, description="Position X normalisée (centre)")
     y: float = Field(..., ge=0.0, le=1.0, description="Position Y normalisée (centre)")
     label: Optional[str] = None
     legend: Optional[str] = None
     icon: Optional[str] = None
-    icon_path_d: Optional[str] = None
+    icon_path_d: Optional[Union[str, List[str]]] = None  # un path SVG, ou une liste de paths copiés tels quels
     icon_view_box: Optional[Tuple[float, float, float, float]] = None
     icon_fill_rule: Literal["nonzero", "evenodd"] = "nonzero"
     icon_mode: Literal["fill", "stroke"] = "fill"
+    icon_linecap: Literal["round", "butt", "square"] = "round"  # extrémités des traits (mode stroke)
+    icon_stroke_width: Optional[float] = Field(None, gt=0, description="Épaisseur du trait en unités du icon_view_box (mode stroke)")
     fill: Optional[str] = None
     stroke: Optional[str] = None
     legend_color: Optional[str] = None
     legend_position: Literal["center", "bottom_left"] = "center"
     legend_bold: bool = False
     legend_font_size_mm: Optional[float] = Field(None, gt=0)
+    legend_always: bool = False  # légende imprimée sur la machine (nom, marque) : visible même sans --detail
+    legend_spans: Optional[List[TextSpan]] = None  # légende en plusieurs styles ; `legend` devient leur concaténation
+    font_family: Optional[str] = None  # police de la légende ; None → police des légendes du thème
     underline: bool = False
+
+    @root_validator(pre=True)
+    def legend_from_spans(cls, values):
+        spans = values.get("legend_spans")
+        if spans and not values.get("legend"):
+            values["legend"] = "".join(span["text"] if isinstance(span, dict) else span.text for span in spans)
+        return values
 
     @root_validator(skip_on_failure=True)
     def validate_custom_icon(cls, values):
@@ -79,6 +99,15 @@ class LogoComponent(BaseComponent):
             raise ValueError("Un logo doit définir icon_path_d et icon_view_box")
         return values
 
+class TextComponent(BaseComponent):
+    """Inscription imprimée sur la machine (marque, modèle, titre de section) : toujours visible.
+    Le texte est dans `legend` ; `x`/`y` désignent le point d'ancrage (`text_anchor`) sur la ligne médiane du texte."""
+    type: Literal["text"]
+    legend: str = Field(..., min_length=1)
+    text_anchor: Literal["start", "middle", "end"] = "middle"
+    width_mm: Optional[float] = Field(None, gt=0, description="Étire ou resserre le texte à cette largeur exacte")
+    detail_only: bool = False  # inscription trop petite pour la vue d'ensemble : seulement avec --detail
+
 class DevicePort(BaseModel):
     id: str = Field(..., min_length=1)
     label: str = Field(..., min_length=1)
@@ -102,6 +131,7 @@ Component = Union[
     ScrewComponent,
     FrameComponent,
     LogoComponent,
+    TextComponent,
 ]
 
 class DeviceLayout(BaseModel):
