@@ -2,6 +2,7 @@ import pytest
 import typer
 
 import json
+from pathlib import Path
 
 from cli import default_output_path, select_theme, slugify
 from renderer.models import Theme
@@ -34,12 +35,24 @@ def test_select_unknown_theme():
 @pytest.mark.parametrize("detail, expected", [(False, "acme-box-elektron-dark-pro.svg"), (True, "acme-box-elektron-dark-pro-detail.svg")])
 def test_default_output_path_differs_in_detail(detail, expected):
     theme = Theme(**json.loads((ROOT / "themes" / "flat.json").read_text(encoding="utf-8")))
-    assert default_output_path("Acme Box", theme, detail).name == expected
+    assert default_output_path("Acme Box", theme, detail, Path("output")).name == expected
 
 
-def test_device_outputs_go_in_their_own_folder_and_scenes_at_root():
-    theme = Theme(**json.loads((ROOT / "themes" / "flat.json").read_text(encoding="utf-8")))
-    device = default_output_path("Roland TB-3", theme, False, in_own_folder=True)
-    scene = default_output_path("scene-nays_2026", theme, True)
-    assert device.as_posix() == "output/roland-tb-3/roland-tb-3-elektron-dark-pro.svg"
-    assert scene.as_posix() == "output/scene-nays-2026-elektron-dark-pro-detail.svg"
+def test_outputs_are_grouped_by_machine_and_by_scene():
+    from cli import device_output_folder, scene_output_folder
+    from tests.conftest import make_device
+    device = make_device(model="TB-3").copy(update={"manufacturer": "Roland"})
+    assert device_output_folder(device).as_posix() == "output/roland-tb-3"
+    assert scene_output_folder(Path("scenes/nays_2026_carre.json")).as_posix() == "output/scenes/nays-2026-carre"
+
+
+def test_render_all_generates_every_device_and_scene(tmp_path, monkeypatch):
+    from typer.testing import CliRunner
+    from cli import DEVICES_DIR, SCENES_DIR, app
+    monkeypatch.chdir(tmp_path)
+    result = CliRunner().invoke(app, ["render-all", "--theme", "flat"])
+    assert result.exit_code == 0, result.output
+    svgs = list((tmp_path / "output").rglob("*.svg"))
+    expected = (len(list(DEVICES_DIR.glob("*/*.json"))) + len(list(SCENES_DIR.glob("*.json")))) * 2
+    assert len(svgs) == expected
+    assert sum(1 for p in svgs if p.stem.endswith("-detail")) == expected // 2

@@ -64,7 +64,7 @@ devices/<marque>/*.json   Layouts d'appareils (données)
   roland/tb-3.json          TB-3 (240×173 mm, maquette simplifiée)
 themes/*.json          Thèmes : dark_slate, flat ("Elektron Dark Pro"), outlined_dark, outlined_light
 scenes/*.json          Scènes : nays_2026.json ("Live Rig Principal", 4 appareils, 7 câbles)
-output/                Sorties : <machine>/<machine>-<thème>[-detail].svg par machine, scènes à la racine (scene-<nom>-<thème>[-detail].svg|png) ; versionnées
+output/                Sorties : <machine>/<machine>-<thème>[-detail].svg|png ; scenes/<scène>/scene-<scène>-<thème>[-detail].svg|png ; versionnées
 README.md, JSON.md     Doc utilisateur (FR) : usage CLI / schéma JSON
 requirements*.txt      Dépendances épinglées (runtime / dev)
 pytest.ini             Config pytest

@@ -38,7 +38,11 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 | `available_themes()` | `[(Path, name)]` triés, `name` lu dans le JSON (fallback `stem`) |
 | `select_theme(opt)` | `opt` = chemin existant → ce chemin ; sinon match insensible à la casse sur `stem`, `name` de fichier ou `name` du thème ; `None` → prompt interactif numéroté. Erreurs → `typer.BadParameter` |
 | `slugify(s)` | ASCII, minuscules, `-` — sert aux noms de sortie auto |
-| `default_output_path(name, theme, detail, in_own_folder=False)` | `<slug(name)>-<slug(theme.name)>[-detail].svg` dans `output/` (scènes) ou `output/<slug(name)>/` (machines : `in_own_folder=True`) — un fichier par thème et par mode |
+| `default_output_path(name, theme, detail, folder)` | `<folder>/<slug(name)>-<slug(theme.name)>[-detail].svg` — un fichier par thème et par mode |
+| `device_output_folder(device)`, `scene_output_folder(scene_path)` | `output/<fabricant>-<modèle>/` et `output/scenes/<slug(stem)>/` (`OUTPUT_DIR` relatif au dossier courant) |
+| `ROOT_DIR`, `DEVICES_DIR`, `SCENES_DIR` | Dossiers du projet (absolus) |
+| `load_theme(path)`, `render_device_file(path, theme, detail, output?)`, `render_scene_file(path, theme, detail, output?)` | Rendu d'un fichier → chemin SVG écrit ; partagés par toutes les commandes |
+| `render_all(--theme?, --png, --dpi)` (`render-all`) | Machines `devices/*/*.json` + scènes `scenes/*.json` × thèmes × (sans, avec détail) ; continue en cas d'erreur, liste les échecs, code 1 s'il y en a |
 | `export_png(svg_path, dpi)` | `.png` à côté du SVG via `renderer.export.svg_to_png` |
 | `render(device_path, --theme/-t, --output/-o, --labels/--no-labels, --detail, --png, --dpi)` | Nom : `default_output_path("<manufacturer>-<model>", …)` |
 | `render_scene(scene_path, --theme/-t, --output/-o, --labels, --detail, --png, --dpi)` | Nom : `default_output_path("scene-<stem>", …)`. `show_labels = labels or detail` |
@@ -155,7 +159,7 @@ Pipeline (`__init__.route_cables`) : ancrage des ports → contrôle des prises 
 |---|---|
 | `SCENE_PADDING_MM = 20` | Marge autour de la scène |
 | `load_scene(path)`, `load_scene_layouts(scene, base_dir)` | Chargement JSON ; chemins `device` relatifs à `base_dir` = **dossier du fichier de scène** ; absent → `ValueError` « Layout introuvable » |
-| `render_scene_svg(scene_path, output_path, theme, padding_mm=20, show_labels=False)` | load → scène vide = `ValueError` → validate → resolve_positions → check_no_overlap → route_cables → compute_bounds → **aucun fond** (transparent) → `<g translate(offset)>` contenant les appareils (`<g class="device" id="device-<id>">`, ports si détail) puis les câbles puis leurs noms (détail) → `save()` + `print` taille |
+| `render_scene_svg(scene_path, output_path, theme, padding_mm=20, show_labels=False)` | load → scène vide = `ValueError` → validate → resolve_positions → check_no_overlap → route_cables → compute_bounds → **aucun fond** (transparent) → `<g translate(offset)>` contenant les appareils (`<g class="device" id="device-<id>">`, ports si détail) puis les câbles puis leurs noms (détail) → `save()` |
 
 `cli.py render-scene` attrape les `ValueError` (dont `ValidationError` pydantic) → message `❌ Scène invalide : …` et code de sortie 1.
 

@@ -88,4 +88,3 @@ def render_scene_svg(
     dwg.add(content)
 
     dwg.save()
-    print(f"Scène rendue avec succès dans : {output_path} (Taille auto : {bounds.width_mm:.1f}x{bounds.height_mm:.1f} mm)")

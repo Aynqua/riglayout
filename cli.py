@@ -10,7 +10,11 @@ from renderer.scene import render_scene_svg
 from renderer.export import DEFAULT_DPI, svg_to_png
 
 app = typer.Typer()
-THEMES_DIR = Path(__file__).resolve().parent / "themes"
+ROOT_DIR = Path(__file__).resolve().parent
+THEMES_DIR = ROOT_DIR / "themes"
+DEVICES_DIR = ROOT_DIR / "devices"
+SCENES_DIR = ROOT_DIR / "scenes"
+OUTPUT_DIR = Path("output")  # relatif au dossier courant
 
 PNG_OPTION = typer.Option(False, "--png", help="Exporter aussi un PNG transparent à côté du SVG")
 DPI_OPTION = typer.Option(DEFAULT_DPI, "--dpi", help="Résolution du PNG (points par pouce)")
@@ -61,12 +65,45 @@ def slugify(value: str) -> str:
     return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", normalized.lower())).strip("-")
 
 
-def default_output_path(name: str, theme: Theme, detail: bool, in_own_folder: bool = False) -> Path:
-    """<name>-<thème>[-detail].svg dans output/ (scènes) ou output/<name>/ (machines, `in_own_folder`).
-    Un fichier distinct par thème et par mode."""
+def default_output_path(name: str, theme: Theme, detail: bool, folder: Path) -> Path:
+    """<folder>/<name>-<thème>[-detail].svg : un fichier distinct par thème et par mode."""
     suffix = "-detail" if detail else ""
-    folder = Path("output") / slugify(name) if in_own_folder else Path("output")
     return folder / f"{slugify(name)}-{slugify(theme.name)}{suffix}.svg"
+
+
+def device_output_folder(device: DeviceLayout) -> Path:
+    """output/<fabricant>-<modèle>/"""
+    return OUTPUT_DIR / slugify(f"{device.manufacturer}-{device.model}")
+
+
+def scene_output_folder(scene_path: Path) -> Path:
+    """output/scenes/<nom du fichier de scène>/"""
+    return OUTPUT_DIR / "scenes" / slugify(scene_path.stem)
+
+
+def load_theme(theme_path: Path) -> Theme:
+    with open(theme_path, "r", encoding="utf-8") as f:
+        return Theme(**json.load(f))
+
+
+def render_device_file(device_path: Path, theme: Theme, detail: bool, output_path: Optional[Path] = None) -> Path:
+    """Rend une machine en SVG et renvoie le chemin écrit."""
+    with open(device_path, "r", encoding="utf-8") as f:
+        device = DeviceLayout(**json.load(f))
+    if output_path is None:
+        output_path = default_output_path(f"{device.manufacturer}-{device.model}", theme, detail, device_output_folder(device))
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    render_svg(device, theme, str(output_path), show_labels=detail)
+    return output_path
+
+
+def render_scene_file(scene_path: Path, theme: Theme, detail: bool, output_path: Optional[Path] = None) -> Path:
+    """Rend une scène en SVG et renvoie le chemin écrit. Lève ValueError si la scène est invalide."""
+    if output_path is None:
+        output_path = default_output_path(f"scene-{scene_path.stem}", theme, detail, scene_output_folder(scene_path))
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    render_scene_svg(scene_path=str(scene_path), output_path=str(output_path), theme=theme, show_labels=detail)
+    return output_path
 
 
 @app.command()
@@ -81,22 +118,9 @@ def render(
 ):
     """Rendu d'un appareil unique au format SVG."""
     typer.echo(f"Chargement du device : {device_path}")
-    with open(device_path, "r", encoding="utf-8") as f:
-        device_data = json.load(f)
-    device = DeviceLayout(**device_data)
-
     theme_path = select_theme(theme_option)
     typer.echo(f"Chargement du thème : {theme_path}")
-    with open(theme_path, "r", encoding="utf-8") as f:
-        theme_data = json.load(f)
-    theme = Theme(**theme_data)
-
-    detail = show_labels or show_details
-    if output_path is None:
-        output_path = default_output_path(f"{device.manufacturer}-{device.model}", theme, detail, in_own_folder=True)
-
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    render_svg(device, theme, str(output_path), show_labels=detail)
+    output_path = render_device_file(device_path, load_theme(theme_path), show_labels or show_details, output_path)
     typer.echo(f"✅ Fichier SVG généré avec succès : {output_path}")
     if png:
         export_png(output_path, dpi)
@@ -114,32 +138,55 @@ def render_scene(
 ):
     """Rendu d'une scène complète avec plusieurs appareils et câblage."""
     typer.echo(f"Chargement de la scène : {scene_path}")
-
     theme_path = select_theme(theme_option)
     typer.echo(f"Chargement du thème : {theme_path}")
-    with open(theme_path, "r", encoding="utf-8") as f:
-        theme_data = json.load(f)
-    theme = Theme(**theme_data)
-
-    detail = show_labels or show_details
-    if output_path is None:
-        output_path = default_output_path(f"scene-{scene_path.stem}", theme, detail)
-
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
     try:
-        render_scene_svg(
-            scene_path=str(scene_path),
-            output_path=str(output_path),
-            theme=theme,
-            show_labels=detail
-        )
+        output_path = render_scene_file(scene_path, load_theme(theme_path), show_labels or show_details, output_path)
     except ValueError as error:  # inclut les ValidationError pydantic
         typer.secho(f"❌ Scène invalide : {error}", fg=typer.colors.RED, err=True)
         raise typer.Exit(code=1)
     typer.echo(f"✅ Scène SVG générée avec succès : {output_path}")
     if png:
         export_png(output_path, dpi)
+
+
+@app.command(name="render-all")
+def render_all(
+    theme_option: Optional[str] = typer.Option(None, "--theme", "-t", help="Limiter à un thème (par défaut : tous)"),
+    png: bool = PNG_OPTION,
+    dpi: float = DPI_OPTION,
+):
+    """Génère tout : chaque machine de devices/ et chaque scène de scenes/, dans chaque thème, avec et sans --detail."""
+    themes = [select_theme(theme_option)] if theme_option else [path for path, _ in available_themes()]
+    devices = sorted(DEVICES_DIR.glob("*/*.json"))
+    scenes = sorted(SCENES_DIR.glob("*.json"))
+    jobs = [(render_device_file, path) for path in devices] + [(render_scene_file, path) for path in scenes]
+    total = len(jobs) * len(themes) * 2
+    typer.echo(f"{len(devices)} machines, {len(scenes)} scènes, {len(themes)} thèmes, avec et sans détail : {total} rendus")
+
+    failures, done = [], 0
+    for theme_path in themes:
+        theme = load_theme(theme_path)
+        for renderer_function, source in jobs:
+            for detail in (False, True):
+                done += 1
+                label = f"{source.relative_to(ROOT_DIR).as_posix()} · {theme_path.stem}{' · détail' if detail else ''}"
+                try:
+                    svg_path = renderer_function(source, theme, detail)
+                    if png:
+                        svg_to_png(svg_path, svg_path.with_suffix(".png"), dpi=dpi)
+                    typer.echo(f"[{done}/{total}] ✅ {svg_path.as_posix()}")
+                except Exception as error:  # un rendu raté ne bloque pas les autres
+                    failures.append((label, error))
+                    typer.secho(f"[{done}/{total}] ❌ {label} : {error}", fg=typer.colors.RED, err=True)
+
+    if failures:
+        typer.secho(f"{total - len(failures)}/{total} rendus réussis, {len(failures)} en échec :", fg=typer.colors.RED, err=True)
+        for label, error in failures:
+            typer.secho(f"  - {label} : {error}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+    typer.echo(f"✅ {total} rendus générés{' (SVG + PNG)' if png else ''}")
+
 
 if __name__ == "__main__":
     app()

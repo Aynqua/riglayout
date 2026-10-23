@@ -45,16 +45,26 @@ Une scène place plusieurs appareils (positions absolues en mm ou relatives à u
 
 Les chemins des appareils dans une scène sont relatifs au fichier de scène. La scène n'a pas de fond : le SVG et le PNG sont transparents, prêts pour l'impression.
 
+## Tout générer
+
+```powershell
+python cli.py render-all                 # toutes les machines et scènes, tous les thèmes, avec et sans --detail (SVG)
+python cli.py render-all --png           # idem + PNG transparents (300 dpi, ~4 min)
+python cli.py render-all --theme flat    # limité à un thème
+```
+
+Un rendu en erreur n'arrête pas les autres : ils sont listés à la fin et la commande sort en erreur.
+
 ## Fichiers de sortie
 
-Sans `--output`, chaque machine a son dossier dans `output/`, et les scènes sont à la racine de `output/`. Chaque thème et chaque mode a son propre fichier :
+Sans `--output`, chaque machine a son dossier dans `output/`, et chaque scène le sien dans `output/scenes/`. Chaque thème et chaque mode a son propre fichier :
 
 | Rendu | Fichier |
 | --- | --- |
 | Appareil | `output/<fabricant>-<modèle>/<fabricant>-<modèle>-<thème>.svg` |
 | Appareil, `--detail` | `output/<fabricant>-<modèle>/<fabricant>-<modèle>-<thème>-detail.svg` |
-| Scène | `output/scene-<nom du fichier>-<thème>.svg` |
-| Scène, `--detail` | `output/scene-<nom du fichier>-<thème>-detail.svg` |
+| Scène | `output/scenes/<nom du fichier>/scene-<nom du fichier>-<thème>.svg` |
+| Scène, `--detail` | `output/scenes/<nom du fichier>/scene-<nom du fichier>-<thème>-detail.svg` |
 
 Avec `--png`, un `.png` du même nom est écrit à côté du SVG.
 
