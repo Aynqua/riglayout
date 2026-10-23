@@ -4,10 +4,9 @@ import unicodedata
 import typer
 from pathlib import Path
 from typing import Optional
-from renderer.models import DeviceLayout
-from renderer.themes import Theme
-from renderer.svg import render_svg
-from renderer.scenes import render_scene_svg
+from renderer.models import DeviceLayout, Theme
+from renderer.device import render_svg
+from renderer.scene import render_scene_svg
 
 app = typer.Typer()
 THEMES_DIR = Path(__file__).resolve().parent / "themes"

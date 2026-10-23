@@ -23,7 +23,22 @@
 - Énumérations fermées → `Literal[...]` ; listes ouvertes → `List[str]` (ex. `capabilities`).
 - Règles inter-champs → `@root_validator(skip_on_failure=True)` qui `raise ValueError("message FR")` et `return values`.
 - Nouveaux champs **optionnels avec défaut** pour garder les anciens JSON valides (principe de rétrocompatibilité appliqué partout : `components`/`ports` par défaut `[]`, `labels` par défaut).
-- Nouveau type de composant : classe `XxxComponent(BaseComponent)` avec `type: Literal["xxx"]`, l'ajouter à l'`Union Component`, gérer son dessin dans `draw_device_to_group`, ajouter son style dans **les 4 thèmes**, documenter dans `JSON.md`.
+- Nouveau type de composant : classe `XxxComponent(BaseComponent)` avec `type: Literal["xxx"]`, l'ajouter à l'`Union Component`, gérer son dessin dans `renderer/device/draw.py` (`draw_device_to_group`), l'ajouter à `all_components()` dans `tests/conftest.py`, ajouter son style dans **les 4 thèmes**, documenter dans `JSON.md`.
+
+## Organisation des modules
+
+- Un fichier = une responsabilité (voir le tableau « Où travailler » dans `codebase_map.md`). Une feature nouvelle et distincte (ex. dessin des ports) → nouveau module dans le paquet concerné plutôt que grossir `render.py`.
+- Dépendances à sens unique `models` ← `device` ← `scene` ← `cli`. Les modèles ne connaissent pas svgwrite.
+- Imports absolus depuis le module précis (`from renderer.scene.layout import resolve_positions`) à l'intérieur de `renderer/` ; les `__init__.py` ne réexportent que l'API publique utilisée par `cli.py`.
+- Valeurs magiques de rendu (dimensions, couleurs par défaut) → constantes `UPPER_CASE` en tête de module.
+- Icônes : une fonction `draw_xxx(dwg, center_x, center_y, width, height, color)` enregistrée dans `ICONS`, jamais de chaîne de `if`.
+
+## Tests
+
+- Lancer : `./venv/bin/python.exe -m pytest` (installer avec `pip install -r requirements-dev.txt`).
+- **Ne pas figer le design** : pas de comparaison avec les SVG réels du Digitakt / Octatrack / Roland (designs en v0, retouchés à la fin). Tester la logique (modèles, validation, positions, câbles) et la bonne formation du SVG sur des données de test construites dans `tests/conftest.py`.
+- Chaque nouvelle logique (règle de validation, ancre, routage…) arrive avec son test.
+- Refactor sans changement de rendu attendu : capturer les SVG avant (tous appareils × thèmes × `--detail`, + scène) dans le scratchpad et comparer après (`diff -rq`), sans les commiter.
 
 ## Gestion des erreurs
 
@@ -46,7 +61,7 @@
 
 ## Workflow
 
-- Dépendances : ajouter toute nouvelle lib à `requirements.txt` avec version épinglée. Ne jamais versionner `venv/` ni `__pycache__/`.
-
+- Dépendances : ajouter toute nouvelle lib à `requirements.txt` (ou `requirements-dev.txt` si outil de dev) avec version épinglée. Ne jamais versionner `venv/` ni `__pycache__/`.
+- Avant de commiter : `pytest` vert.
 - Vérifier un changement en régénérant : `PYTHONIOENCODING=utf-8 ./venv/bin/python.exe cli.py render devices/elektron/digitakt2.json -t flat --detail` et `… render-scene scenes/nays_2026.json -t flat`.
 - **Mettre à jour `doc/`** (et `JSON.md` si le schéma change) à chaque évolution d'architecture, ajout de fonction majeure ou changement de règle. Mettre à jour la date « Màj » en tête de fichier.

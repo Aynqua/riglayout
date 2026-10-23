@@ -18,8 +18,8 @@ Séparation stricte **données (layouts JSON) / apparence (thèmes JSON) / moteu
 | Validation | **pydantic 1.10** (v1 !) | `root_validator`, `Field(...)`, `Model(**dict)`. Ne pas utiliser l'API v2 (`model_validator`, `model_dump`) |
 | SVG | svgwrite 1.4.3 | unités = mm (viewBox en mm, `size="…mm"`) |
 | CLI | typer 0.27 (+ rich) | |
-| Tests | aucun | |
-| Dépendances | `requirements.txt` | `pydantic==1.10.26 svgwrite==1.4.3 typer==0.27.3` (versions épinglées = celles du venv) |
+| Tests | pytest 9.1 | `tests/`, config `pytest.ini` (`pythonpath = .`) |
+| Dépendances | `requirements.txt` / `requirements-dev.txt` | `pydantic==1.10.26 svgwrite==1.4.3 typer==0.27.3` ; dev : `+ pytest==9.1.1` |
 
 Lancer : `.\venv\bin\python.exe cli.py <commande> ...` (ou activer `.\venv\bin\Activate.ps1`).
 Sous Git Bash, préfixer `PYTHONIOENCODING=utf-8` sinon l'emoji ✅ du `typer.echo` final lève `UnicodeEncodeError` (le SVG est déjà écrit à ce moment-là).
@@ -30,11 +30,20 @@ Sous Git Bash, préfixer `PYTHONIOENCODING=utf-8` sinon l'emoji ✅ du `typer.ec
 cli.py                 Point d'entrée Typer : commandes `render` et `render-scene`
 renderer/
   __init__.py          vide
-  models.py            Modèles pydantic d'un appareil (DeviceLayout, composants, ports)
-  themes.py            Modèles pydantic d'un thème (Theme, ComponentStyle, LabelStyle)
-  svg.py               Moteur de dessin d'un appareil (draw_device_to_group, render_svg, légendes)
-  icons.py             Pictogrammes intégrés + icônes custom par path SVG
-  scenes.py            Modèles de scène, validation des connexions, rendu multi-appareils + câbles
+  models/              Modèles pydantic, aucune dépendance au rendu
+    device.py          DeviceLayout, composants, ports
+    theme.py           Theme, ComponentStyle, LabelStyle
+    scene.py           Scene, positions, connexions
+  device/              Rendu d'un appareil
+    draw.py            draw_device_to_group (moteur partagé), render_svg
+    legends.py         Couleur / taille / placement des légendes
+    icons.py           Registre ICONS des pictogrammes + icônes custom par path SVG
+  scene/               Rendu de scène
+    validation.py      validate_scene_connections
+    layout.py          Positions absolues/relatives, encombrement
+    cables.py          Routage et couleur des câbles
+    render.py          Orchestration render_scene_svg
+tests/                 pytest, indépendants du design des vrais appareils
 devices/<marque>/*.json   Layouts d'appareils (données)
   elektron/digitakt2.json   Digitakt II (215×176 mm, ~68 composants, 10 ports)
   elektron/octatrack2.json  Octatrack (340×176 mm, ~79 composants, 14 ports) — remplace octatrack.json (supprimé)
@@ -44,8 +53,9 @@ themes/*.json          Thèmes : dark_slate, flat ("Elektron Dark Pro"), outline
 scenes/*.json          Scènes : nays_2026.json ("Live Rig Principal", 4 appareils, 7 câbles)
 output/*.svg           SVG générés (versionnés, pas forcément à jour ; contient un doublon "… copy.svg")
 README.md, JSON.md     Doc utilisateur (FR) : usage CLI / schéma JSON
-requirements.txt       Dépendances épinglées
-.gitignore             venv/, __pycache__/, *.pyc
+requirements*.txt      Dépendances épinglées (runtime / dev)
+pytest.ini             Config pytest
+.gitignore             venv/, __pycache__/, *.pyc, .pytest_cache/
 CLAUDE.md              Pointeur vers doc/ pour Claude
 doc/                   Cette doc technique
 ```
@@ -65,15 +75,16 @@ render_svg(device, theme, out, show_labels)
 
 ### Scène (`cli.py render-scene`)
 ```
-scene.json ──> Scene(**data)
-  pour chaque SceneDevice : open(device) → DeviceLayout   (chemin relatif au CWD, pas au fichier scène)
-validate_scene_connections(scene, layouts_by_instance)
-résolution des positions (absolute | relative en cascade, max 10 passes)
-bounding box + padding_mm (80) → taille SVG automatique
-pour chaque appareil : <g translate> + Rect fond thème + draw_device_to_group
-coordonnées absolues des ports (port.x/y normalisés sur l'appareil)
-câbles : tracé orthogonal "goulotte" au-dessus de l'appareil source
+render.load_scene / load_scene_layouts    (chemins device relatifs au CWD, pas au fichier scène)
+validation.validate_scene_connections
+layout.resolve_positions                  (absolute | relative en cascade, max 10 passes)
+layout.compute_bounds                     (bbox + padding_mm 80 → taille SVG + offset)
+render : par appareil <g translate> + Rect fond thème + device.draw_device_to_group
+         + coordonnées absolues des ports (port.x/y normalisés sur l'appareil)
+cables.draw_cables                        (tracé orthogonal "goulotte" au-dessus de l'appareil source)
 ```
+
+Dépendances entre paquets à sens unique : `models` ← `device` ← `scene` ← `cli`. Un module de `models/` n'importe jamais `device/` ou `scene/`.
 
 ## Conventions de coordonnées (essentiel)
 

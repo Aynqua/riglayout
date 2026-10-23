@@ -92,7 +92,6 @@ class DevicePort(BaseModel):
     capabilities: List[str] = Field(default_factory=list)
     x: float = Field(0.5, ge=0.0, le=1.0, description="Position X relative sur l'appareil")
     y: float = Field(1.0, ge=0.0, le=1.0, description="Position Y relative (ex: 1.0 = bord inférieur)")
-    connector: Optional[str] = None
 
 Component = Union[
     EncoderComponent,

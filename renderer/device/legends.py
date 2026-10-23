@@ -1,10 +1,10 @@
-import svgwrite
-from svgwrite.shapes import Rect, Circle, Line
+"""Légendes imprimées sur les commandes : couleur, taille de police, texte ou icône."""
+from svgwrite.shapes import Line
 from svgwrite.text import Text
-from svgwrite.path import Path
-from renderer.models import DeviceLayout
-from renderer.themes import Theme
-from renderer.icons import draw_device_logo, add_control_icon, draw_custom_icon
+
+from renderer.models.theme import Theme
+from renderer.device.icons import add_control_icon, draw_custom_icon
+
 
 def label_color(theme: Theme) -> str:
     if theme.labels.fill:
@@ -21,6 +21,7 @@ def label_color(theme: Theme) -> str:
         return "#ffffff"
     luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255
     return "#111111" if luminance > 0.55 else "#ffffff"
+
 
 def default_control_font_size(component, theme: Theme) -> float:
     if component.legend_font_size_mm is not None:
@@ -40,7 +41,7 @@ def add_control_legend(dwg, component, theme: Theme, center_x: float, center_y: 
         text_x = center_x - component.width_mm / 2 + max(font_size * 1.2, 3.0) if component.legend_position == "bottom_left" else center_x
         text_y = center_y + component.height_mm / 2 - max(font_size * 1.1, 2.0) if component.legend_position == "bottom_left" else center_y
         anchor = "start" if component.legend_position == "bottom_left" else "middle"
-        
+
         dwg.add(Text(
             legend, insert=(text_x, text_y), text_anchor=anchor, dominant_baseline="central",
             fill=color, font_family=theme.labels.font_family, font_size=font_size,
@@ -70,54 +71,3 @@ def add_control_legend(dwg, component, theme: Theme, center_x: float, center_y: 
                 start=(center_x - underline_width / 2, underline_y), end=(center_x + underline_width / 2, underline_y),
                 stroke=color, stroke_width=max(font_size * 0.08, 0.12)
             ))
-
-def draw_device_to_group(dwg_container, layout: DeviceLayout, theme: Theme, show_labels: bool = False):
-    """Dessine les composants d'un device directement dans un groupe SVG conteneur."""
-    for comp in layout.components:
-        cx = comp.x * layout.physical.width_mm
-        cy = comp.y * layout.physical.height_mm
-
-        if comp.type == "logo":
-            draw_device_logo(dwg_container, comp, cx, cy, comp.fill or label_color(theme))
-            if show_labels:
-                add_control_legend(dwg_container, comp, theme, cx, cy)
-            continue
-
-        style = theme.components.get(comp.type)
-        if not style:
-            continue
-
-        if comp.type == "screen":
-            x = cx - (comp.width_mm / 2)
-            y = cy - (comp.height_mm / 2)
-            dwg_container.add(Rect(
-                insert=(x, y), size=(comp.width_mm, comp.height_mm), rx=style.rx,
-                fill=comp.fill or style.fill, stroke=comp.stroke or style.stroke, stroke_width=style.stroke_width
-            ))
-        elif comp.type in ("encoder", "led", "screw"):
-            r = comp.diameter_mm / 2
-            dwg_container.add(Circle(
-                center=(cx, cy), r=r, fill=comp.fill or style.fill,
-                stroke=comp.stroke or style.stroke, stroke_width=style.stroke_width
-            ))
-        elif comp.type in ("button", "pad", "frame"):
-            x = cx - (comp.width_mm / 2)
-            y = cy - (comp.height_mm / 2)
-            dwg_container.add(Rect(
-                insert=(x, y), size=(comp.width_mm, comp.height_mm), rx=style.rx,
-                fill=comp.fill or style.fill, stroke=comp.stroke or style.stroke, stroke_width=style.stroke_width
-            ))
-
-        if show_labels:
-            add_control_legend(dwg_container, comp, theme, cx, cy)
-
-def render_svg(device: DeviceLayout, theme: Theme, output_path: str, show_labels: bool = False):
-    w_mm = device.physical.width_mm
-    h_mm = device.physical.height_mm
-
-    dwg = svgwrite.Drawing(output_path, size=(f"{w_mm}mm", f"{h_mm}mm"), viewBox=f"0 0 {w_mm} {h_mm}")
-    bg_style = theme.background
-    dwg.add(Rect(insert=(0, 0), size=(w_mm, h_mm), rx=bg_style.get("rx", 0), fill=bg_style.get("fill", "none"), stroke=bg_style.get("stroke", "none"), stroke_width=bg_style.get("stroke_width", 0)))
-    
-    draw_device_to_group(dwg, device, theme, show_labels=show_labels)
-    dwg.save()
