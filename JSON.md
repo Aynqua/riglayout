@@ -133,6 +133,8 @@ Les ports décrivent les entrées et sorties physiques ou logiques d'un appareil
 
 `direction` vaut `input`, `output` ou `bidirectional`; `signal` vaut `audio`, `midi`, `usb` ou `power`. `connector`, `channels`, `balanced`, `voltage_v`, `current_a` et `capabilities` sont facultatifs. `channels` décrit le nombre de canaux sur le connecteur; `balanced` indique une liaison audio équilibrée; `voltage_v` et `current_a` décrivent une alimentation. `capabilities` est une liste ouverte pour les fonctions combinées comme MIDI Thru, DIN Sync ou Overbridge. Ces métadonnées n'empêchent pas les anciens ports `audio` et `midi` de rester valides.
 
+`x` et `y` (facultatifs, normalisés entre `0` et `1`) placent le port sur l'appareil; ils servent de point d'ancrage aux câbles d'une scène. Par défaut `x = 0.5` et `y = 1.0` (bord inférieur); `y = 0.0` correspond au bord supérieur, où se trouve la connectique des machines vues de dessus.
+
 ## Thèmes
 
 Un thème contient `name`, `background` et `components`. `components` associe un type de composant à `fill`, `stroke`, `stroke_width` et éventuellement `rx`. `labels` peut définir `fill`, `font_family` et `font_size_mm` pour les légendes. Un composant peut remplacer localement `fill` ou `stroke`.
@@ -141,22 +143,39 @@ Les pads utilisent le style `pad` du thème. Pour qu'ils aient le même aspect q
 
 ## Scènes
 
-Une scène positionne des instances de layouts et relie leurs ports. `device` est le chemin du JSON de layout; `id` identifie une instance dans la scène.
+Une scène positionne des instances de layouts et relie leurs ports. `device` est le chemin du JSON de layout, relatif au dossier depuis lequel la commande est lancée; `id` identifie une instance dans la scène.
 
 ```json
 {
   "name": "Live",
   "devices": [
-    {"id": "octatrack", "device": "devices/elektron/octatrack.json", "x": 0.25, "y": 0.5},
-    {"id": "synth", "device": "devices/roland/exemple.json", "x": 0.75, "y": 0.5}
+    {
+      "id": "digitakt",
+      "device": "devices/elektron/digitakt2.json",
+      "position": {"type": "absolute", "x": 0, "y": 0}
+    },
+    {
+      "id": "octatrack",
+      "device": "devices/elektron/octatrack2.json",
+      "position": {"type": "relative", "anchor": "right", "target": "digitakt", "spacing_mm": 10}
+    }
   ],
   "connections": [
     {
-      "source": {"device_id": "octatrack", "port_id": "midi-out"},
-      "target": {"device_id": "synth", "port_id": "midi-in"}
+      "source": {"device_id": "digitakt", "port_id": "midi-out"},
+      "target": {"device_id": "octatrack", "port_id": "midi-in"}
     }
   ]
 }
 ```
 
-Après chargement des layouts, `validate_scene_connections(scene, layouts_by_instance)` vérifie les appareils, les ports, le sens sortie-vers-entrée et la compatibilité des signaux. Les scènes sont modélisées et validables; leur rendu multi-appareils reste à implémenter.
+### Positions
+
+- `absolute` : `x` et `y` en **millimètres**, coin supérieur gauche de l'appareil. Les valeurs négatives sont permises.
+- `relative` : place l'appareil à côté de `target` (un autre `id` de la scène) selon `anchor` (`right` par défaut, `left`, `top`, `bottom`), avec un écart `spacing_mm` (15 par défaut). Les dépendances peuvent s'enchaîner; une dépendance circulaire ou une cible inconnue lève une erreur.
+
+La taille du SVG est calculée automatiquement à partir de l'encombrement des appareils, avec une marge de 80 mm.
+
+### Connexions
+
+À la lecture, `validate_scene_connections(scene, layouts_by_instance)` vérifie les appareils, les ports, le sens (source `output` ou `bidirectional`, cible `input` ou `bidirectional`) et que les deux ports ont le même `signal`. Les câbles partent des positions `x`/`y` des ports et sont tracés à angle droit au-dessus de l'appareil source, sur des pistes décalées pour éviter les superpositions. `label` est facultatif et n'est pas encore rendu.
