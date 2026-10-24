@@ -86,6 +86,7 @@ Exemple de boutons et de commandes :
 }
 ```
 
+- `legend_letter_spacing_em` espace les lettres de la légende (en fraction de sa taille).
 - `legend_always: true` affiche la légende même sans `--detail` : pour ce qui est imprimé sur la machine elle-même (nom du modèle, marque), par exemple le nom sous l'écran du Digitakt II.
 - `legend_position` accepte `center` ou `bottom_left`; cette dernière position est utile pour un nom sur un `frame`.
 - `icon` sélectionne une icône intégrée, par exemple `play`, `record`, `stop`, `keyboard`, `perform`, `save_project`, `samples`, `metronome`, `arrow_up`, `arrow_down`, `arrow_left` ou `arrow_right`.
@@ -134,6 +135,17 @@ Le type `text` représente ce qui est sérigraphié sur la machine : marque, nom
 
 Pour un logo de marque, préférer le tracé officiel en `logo` (ex. le mot « Roland » du TB-3 et du JX-08, issu de Wikimedia Commons) ; le type `text` sert aux inscriptions typographiques (« TB-3 », « TOUCH BASSLINE »…).
 
+### Variantes (écran / impression)
+
+Un composant peut changer selon la variante du thème (`"variant"` dans le thème : `screen` par défaut, `print` pour `tshirt_dark`). `variants` associe une variante aux champs à redéfinir, ou à `"hidden": true` pour masquer le composant :
+
+```json
+{"type": "logo", "label": "Roland Emblem", "variants": {"print": {"hidden": true}}}
+{"type": "logo", "label": "Roland Wordmark", "x": 0.1114, "variants": {"print": {"x": 0.0842, "width_mm": 32.5, "height_mm": 7.06}}}
+```
+
+Sur le TB-3 et le JX-08, la version t-shirt masque l'emblème Roland, trop fin pour l'impression, et place le mot « Roland » à sa place.
+
 `fill` et `stroke` remplacent localement le style de forme du thème. Ils sont prévus pour les exceptions matérielles, par exemple FUNC orange. Les styles par défaut sont définis par type dans le thème.
 
 ## Ports
@@ -178,7 +190,7 @@ Les ports décrivent les entrées et sorties physiques ou logiques d'un appareil
 
 ## Thèmes
 
-Un thème contient `name`, `background` et `components`. `components` associe un type de composant à `fill`, `stroke`, `stroke_width` et éventuellement `rx`. `labels` peut définir `fill`, `font_family` et `font_size_mm` pour les légendes. Un composant peut remplacer localement `fill` ou `stroke`.
+Un thème contient `name`, `background` et `components`. Un type de composant absent de `components` n'est pas dessiné (ex. `tshirt_dark` n'a pas de `screw` : pas de vis). `labels.min_font_weight` impose une graisse minimale à tous les textes, utile pour l'impression où les graisses très fines disparaissent. `components` associe un type de composant à `fill`, `stroke`, `stroke_width` et éventuellement `rx`. `labels` peut définir `fill`, `font_family` et `font_size_mm` pour les légendes. Un composant peut remplacer localement `fill` ou `stroke`.
 
 Les pads utilisent le style `pad` du thème. Pour qu'ils aient le même aspect que les boutons, donne à `pad` les mêmes valeurs que `button`.
 
@@ -210,9 +222,9 @@ Les pads utilisent le style `pad` du thème. Pour qu'ils aient le même aspect q
     "label_font_size_mm": 2.0,
     "colors": {
       "audio": "#3b82f6",
-      "midi": "#f59e0b",
+      "midi": "#ef4444",
       "usb": "#a855f7",
-      "power": "#ef4444"
+      "power": "#facc15"
     }
   }
 }
@@ -290,3 +302,38 @@ Le câblage reproduit un branchement réel :
 `--detail` affiche aussi, dans une scène, les légendes des appareils, chaque port (cercle sur la tranche et nom) et les noms des câbles.
 
 La scène n'a pas de fond : le SVG (et le PNG avec `--png`) est transparent.
+
+## Textes (titres)
+
+Un bloc de texte (fichier `texts/*.json`, ou champ `title` d'une scène) est une liste de lignes. Dans chaque ligne, le texte entre `**` est en gras, le reste dans la graisse fine : `**NAYS** LIVE SETUP`.
+
+```json
+{
+  "lines": [
+    {"text": "**NAYS** LIVE SETUP", "size_mm": 22, "letter_spacing_em": 0.1},
+    {"text": "DIGITAKT II · OCTATRACK MKII · JX-08 · TB-3", "size_mm": 5, "letter_spacing_em": 0.32, "regular_weight": 400}
+  ],
+  "font_family": "Helvetica Neue, Arial, sans-serif",
+  "bold_weight": 700,
+  "regular_weight": 200,
+  "line_gap_em": 1.6,
+  "align": "center"
+}
+```
+
+| Champ | Rôle |
+| --- | --- |
+| `lines` | Lignes : une chaîne, ou un objet avec `text` et, en option, `size_mm`, `letter_spacing_em`, `bold_weight`, `regular_weight`, `font_family`, `color` (remplacent les valeurs du bloc) |
+| `font_family` | Police (liste de repli CSS) |
+| `size_mm` | Taille de police par défaut (12) |
+| `letter_spacing_em` | Espacement des lettres, en fraction de la taille (0,08) |
+| `bold_weight` / `regular_weight` | Graisses du texte `**gras**` et du reste (700 / 200) |
+| `line_gap_em` | Espace entre deux lignes, en fraction de la taille de la ligne suivante |
+| `align` | `left`, `center` (défaut) ou `right` |
+| `color` | Couleur ; par défaut celle des légendes du thème |
+| `uppercase` | Met tout en majuscules |
+
+L'alignement et le recadrage sont mesurés sur le rendu réel : ils sont exacts quelles que soient la police et l'espacement.
+
+Dans une scène, `title` place le bloc centré au-dessus des machines et des câbles, à `title_gap_mm` (20 par défaut) ; la taille de l'image en tient compte. Exemple : `scenes/nays_2026_tshirt.json`.
+

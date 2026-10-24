@@ -33,22 +33,36 @@ def default_control_font_size(component, theme: Theme) -> float:
     return min(theme.labels.font_size_mm, max_font_size)
 
 
-def legend_text(component, theme: Theme, insert, anchor: str, font_size: float, color: str, bold: bool, **attributes) -> Text:
+CAP_MIDDLE_EM = 0.36   # milieu des majuscules au-dessus de la ligne de base (Helvetica / Arial)
+
+
+def _weight(weight: int, theme: Theme) -> int:
+    """Graisse effective : jamais sous `labels.min_font_weight` (traits trop fins pour l'impression)."""
+    minimum = theme.labels.min_font_weight
+    return max(weight, minimum) if minimum else weight
+
+
+def legend_text(component, theme: Theme, insert, anchor: str, font_size: float, color: str, bold: bool,
+                baseline: str = "central", **attributes) -> Text:
     """Élément <text> d'une légende. Avec `legend_spans`, chaque morceau devient un <tspan> avec son propre style
     (graisse, police, couleur, taille) ; sinon le texte est `legend` d'un seul tenant."""
     family = component.font_family or theme.labels.font_family
     spans = component.legend_spans
     text = Text(
-        "" if spans else component.legend, insert=insert, text_anchor=anchor, dominant_baseline="central",
-        fill=color, font_family=family, font_size=font_size, font_weight="bold" if bold else "normal", **attributes
+        "" if spans else component.legend, insert=insert, text_anchor=anchor,
+        fill=color, font_family=family, font_size=font_size, font_weight=_weight(700 if bold else 400, theme), **attributes
     )
     if spans:
         # Sans cela, l'espace en tête d'un morceau (« Digitakt » + « II ») est supprimé au rendu.
         text.attribs["xml:space"] = "preserve"
+    if component.legend_letter_spacing_em:
+        text["letter-spacing"] = component.legend_letter_spacing_em * font_size
+    if baseline != "alphabetic":   # « alphabetic » est la valeur par défaut du SVG : on n'écrit pas l'attribut
+        text["dominant-baseline"] = baseline
     for span in spans or ():
         style = {}
         if span.weight is not None:
-            style["font_weight"] = span.weight
+            style["font_weight"] = _weight(span.weight, theme)
         if span.font_family:
             style["font_family"] = span.font_family
         if span.color:
@@ -64,11 +78,15 @@ def add_control_legend(dwg, component, theme: Theme, center_x: float, center_y: 
     if component.type == "frame" and legend:
         color = component.legend_color or label_color(theme)
         font_size = component.legend_font_size_mm or theme.labels.font_size_mm
-        text_x = center_x - component.width_mm / 2 + max(font_size * 1.2, 3.0) if component.legend_position == "bottom_left" else center_x
-        text_y = center_y + component.height_mm / 2 - max(font_size * 1.1, 2.0) if component.legend_position == "bottom_left" else center_y
-        anchor = "start" if component.legend_position == "bottom_left" else "middle"
-
-        dwg.add(legend_text(component, theme, (text_x, text_y), anchor, font_size, color, component.legend_bold))
+        if component.legend_position == "bottom_left":
+            # Ligne de base alphabétique : le milieu des majuscules (≈ 0.36 em au-dessus) tombe à `font_size`
+            # du bord bas du cadre, quel que soit le moteur de rendu (« central » varie d'une police à l'autre).
+            text_x = center_x - component.width_mm / 2 + max(font_size * 1.2, 3.0)
+            text_y = center_y + component.height_mm / 2 - font_size * (1 - CAP_MIDDLE_EM)
+            dwg.add(legend_text(component, theme, (text_x, text_y), "start", font_size, color, component.legend_bold,
+                                baseline="alphabetic"))
+        else:
+            dwg.add(legend_text(component, theme, (center_x, center_y), "middle", font_size, color, component.legend_bold))
         return
 
     if component.type not in ("button", "pad") or (not legend and not component.icon and not component.icon_path_d):

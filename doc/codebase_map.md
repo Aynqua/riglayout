@@ -42,7 +42,8 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 | `device_output_folder(device)`, `scene_output_folder(scene_path)` | `output/<fabricant>-<modèle>/` et `output/scenes/<slug(stem)>/` (`OUTPUT_DIR` relatif au dossier courant) |
 | `ROOT_DIR`, `DEVICES_DIR`, `SCENES_DIR` | Dossiers du projet (absolus) |
 | `load_theme(path)`, `render_device_file(path, theme, detail, output?)`, `render_scene_file(path, theme, detail, output?)` | Rendu d'un fichier → chemin SVG écrit ; partagés par toutes les commandes |
-| `render_all(--theme?, --png, --dpi)` (`render-all`) | Machines `devices/*/*.json` + scènes `scenes/*.json` × thèmes × (sans, avec détail) ; continue en cas d'erreur, liste les échecs, code 1 s'il y en a |
+| `render_text(texte JSON ou --text, --font, --size, --spacing, --theme, -o, --png, --dpi, --print-width)` (`render-text`) | `output/texts/<nom>/<nom>-<thème>.svg` ; `--text` : lignes séparées par `|` |
+| `render_all(--theme?, --png, --dpi)` (`render-all`) | Machines + scènes × thèmes × (sans, avec détail) + textes `texts/*.json` × thèmes ; continue en cas d'erreur, liste les échecs, code 1 s'il y en a |
 | `export_png(svg_path, dpi)` | `.png` à côté du SVG via `renderer.export.svg_to_png` |
 | `render(device_path, --theme/-t, --output/-o, --labels/--no-labels, --detail, --png, --dpi)` | Nom : `default_output_path("<manufacturer>-<model>", …)` |
 | `render_scene(scene_path, --theme/-t, --output/-o, --labels, --detail, --png, --dpi)` | Nom : `default_output_path("scene-<stem>", …)`. `show_labels = labels or detail` |
@@ -53,7 +54,7 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 
 ### `models/device.py`
 - `PhysicalDimensions` : `width_mm`, `height_mm` (>0, requis), `depth_mm` (opt).
-- `BaseComponent` (commun) : `x`, `y` ∈ [0,1] ; `label`, `legend`, `icon`, `icon_path_d`, `icon_view_box (x,y,w,h)`, `icon_fill_rule` (`nonzero|evenodd`), `icon_mode` (`fill|stroke`), `icon_stroke_width` (unités du view_box, mode stroke), `icon_linecap` (`round|butt|square`), `fill`, `stroke`, `legend_color`, `legend_position` (`center|bottom_left`), `legend_bold`, `legend_font_size_mm`, `legend_always` (légende visible hors détail : nom/marque imprimés), `legend_spans: List[TextSpan]` (morceaux stylés ; `root_validator(pre=True)` remplit `legend` par concaténation), `font_family`, `underline`.
+- `BaseComponent` (commun) : `x`, `y` ∈ [0,1] ; `label`, `legend`, `icon`, `icon_path_d`, `icon_view_box (x,y,w,h)`, `icon_fill_rule` (`nonzero|evenodd`), `icon_mode` (`fill|stroke`), `icon_stroke_width` (unités du view_box, mode stroke), `icon_linecap` (`round|butt|square`), `fill`, `stroke`, `legend_color`, `legend_position` (`center|bottom_left`), `legend_bold`, `legend_font_size_mm`, `legend_always` (légende visible hors détail : nom/marque imprimés), `legend_spans: List[TextSpan]` (morceaux stylés ; `root_validator(pre=True)` remplit `legend` par concaténation), `font_family`, `underline`, `variants: Dict[variante, Dict[champ, valeur]]` (`hidden: true` masque).
 - `TextSpan` : `text`, `weight` (100–900), `font_family?`, `color?`, `font_size_mm?`.
   - `root_validator validate_custom_icon` : `icon_path_d` et `icon_view_box` ensemble ; viewBox w/h > 0.
 - Sous-types (champ `type` Literal) :
@@ -66,14 +67,27 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 
 ### `models/theme.py`
 - `ComponentStyle` : `fill` (requis), `stroke="none"`, `stroke_width=0`, `rx=0`, `indicator_color` (inutilisé).
-- `LabelStyle` : `fill=None` (→ couleur auto), `font_family="sans-serif"`, `font_size_mm=2.5`.
+- `LabelStyle` : `fill=None` (→ couleur auto), `font_family="sans-serif"`, `font_size_mm=2.5`, `min_font_weight?` (100–900, appliqué par `legends._weight` au texte et à chaque span).
 - `PortStyle` (`theme.ports`) : `fill=None` (→ `label_color`), `marker_radius_mm=1.0`, `stroke_width_mm=0.3`, `font_size_mm=1.6`, `label_gap_mm=0.8`.
 - `CableColors` : `audio`, `midi`, `usb`, `power` (chacune avec défaut → surcharge partielle possible).
 - `CableStyle` : `width_mm=1.2`, `spacing_mm=2.2` (validator : ≥ `width_mm`), `clearance_mm=6`, `corner_radius_mm=1.5`, `opacity=0.95`, `colors`.
-- `Theme` : `name`, `background: Dict[str, Any]` (clés lues : `fill`, `stroke`, `stroke_width`, `rx`), `components: Dict[type, ComponentStyle]`, `labels`, `cables: CableStyle` (défaut si absent).
+- `Theme` : `name`, `variant` (`screen` par défaut, `print` pour `tshirt_dark`), `background: Dict[str, Any]` (clés lues : `fill`, `stroke`, `stroke_width`, `rx`), `components: Dict[type, ComponentStyle]`, `labels`, `cables: CableStyle` (défaut si absent).
 
 ### `models/scene.py`
 `AbsolutePosition(type="absolute", x, y)` (mm), `RelativePosition(type="relative", anchor right|left|top|bottom, target, spacing_mm=15)`, `SceneDevice(id, device: chemin, position)`, `PortEndpoint(device_id, port_id)`, `SceneConnection(source, target, label?)`, `Scene(name, devices=[], connections=[])`.
+
+### `models/text.py`
+`parse_markup(str) -> [Run(text, bold)]` (`**…**` = gras, espaces conservés). `TextLine(text, size_mm?, letter_spacing_em?, bold_weight?, regular_weight?, font_family?, color?)`, `TextBlock(lines (str ou TextLine), font_family, color?, size_mm=12, letter_spacing_em=0.08, bold_weight=700, regular_weight=200, line_gap_em=0.45, align, uppercase)`. `Scene.title: TextBlock?`, `Scene.title_gap_mm=20`.
+
+## `renderer/text/` — Blocs de texte
+
+| Symbole | Rôle |
+|---|---|
+| `layout_text_block(block) -> BlockLayout(x_offsets, baselines, bbox)` | Chaque ligne rendue seule par resvg (résolution `MEASURE_PX_PER_EM`=120 px/em, canevas agrandi tant que le texte touche le bord) → boîte encrée → décalage pour un alignement exact. Lignes espacées de `line_gap_em` × taille + capitales (`CAP_HEIGHT_EM`=0.72). Origine = point d'alignement, haut des capitales de la 1re ligne |
+| `draw_text_block(container, block, origin, theme?, layout?)` | `<g class="text-block">`, un `<text>` par ligne (`xml:space=preserve`, `letter-spacing`), un `<tspan>` par run avec sa graisse. Couleur : `block.color` ou `label_color(theme)` |
+| `render_text_svg(block, path, theme?, padding_mm=2)` | SVG autonome recadré sur la boîte encrée |
+
+Scène : `render._place_title` centre le titre (selon `align`) sur l'emprise horizontale des machines, au-dessus de tout (machines + câbles) à `title_gap_mm` ; ses coins entrent dans `compute_bounds`.
 
 ## `renderer/device/` — Rendu d'un appareil
 
@@ -82,6 +96,7 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 ### `device/draw.py`
 | Fonction | Rôle |
 |---|---|
+| `for_variant(component, variant)` | Composant avec les champs de `component.variants[theme.variant]` appliqués (`copy(update=…)`), ou `None` si `hidden` |
 | `draw_device_to_group(container, layout, theme, show_labels)` | **Moteur partagé** appareil/scène. Légendes dessinées si `show_labels` **ou** `comp.legend_always` ; composants `text` toujours. Coordonnées locales en mm (0,0 = coin haut-gauche). `logo` toujours dessiné (couleur `fill` ou `label_color`). Type sans style thème → ignoré. `screen/button/pad/frame` → `Rect` centré ; `encoder/led/screw` → `Circle` |
 | `render_svg(device, theme, path, show_labels)` | SVG d'un appareil : fond (`background`, rx défaut 0) + `draw_device_to_group` + `save()` |
 
@@ -92,7 +107,7 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 | `default_control_font_size(comp, theme)` | `legend_font_size_mm` sinon min(thème, taille qui tient en largeur ≈ `0.62·len` et 55 % de la hauteur) |
 | `legend_text(comp, theme, insert, anchor, size, color, bold, **attrs)` | **Fabrique unique des `<text>` de légende** : texte simple, ou un `<tspan>` par `legend_spans` (+ `xml:space="preserve"`, sinon l'espace de tête d'un morceau disparaît). Police = `comp.font_family` ou thème |
 | `add_printed_text(dwg, comp, theme, x, y)` | Composant `text` : `<text class="printed-text">`, toujours dessiné (appelé avant tout le reste dans `_draw_components`) |
-| `add_control_legend(dwg, comp, theme, cx, cy)` | `frame` : texte `center` ou `bottom_left`. `button`/`pad` : priorité **icon_path_d > icon > legend** ; légende bold forcé pour `button` ; `underline` = `Line`. Autres types (encoder…) : **rien** |
+| `add_control_legend(dwg, comp, theme, cx, cy)` | `frame` : texte `center` ou `bottom_left` (ligne de base alphabétique : milieu des majuscules, `CAP_MIDDLE_EM`=0.36 em, à `font_size` du bas du cadre). `button`/`pad` : priorité **icon_path_d > icon > legend** ; légende bold forcé pour `button` ; `underline` = `Line`. Autres types (encoder…) : **rien** |
 
 ### `device/ports.py`
 | Symbole | Rôle |
@@ -101,6 +116,9 @@ Dépendances entre paquets (sens unique, pas de cycle) : `models` ← `device` �
 | `port_side(port)` | Bord le plus proche de (x, y) normalisés ; égalité : haut > bas > gauche > droite |
 | `port_edge_point(port, w, h)` | Port projeté sur la tranche, coordonnées locales |
 | `draw_ports(container, layout, theme)` | Mode détail : cercle `class="port"` sur la tranche + `<text class="port-label">` (`port.label`) écrit vers l'intérieur (tourné ±90° sur les bords haut/bas) |
+
+### `renderer/print_check.py`
+`analyse_print(svg, print_width_mm) -> PrintReport(print_width_mm, print_height_mm, scale, dpi, pixels, thinnest_line_mm, smallest_text_mm, thin_lines, small_texts)` : parcourt le SVG en cumulant les `scale()` des transforms, mesure `stroke-width` (si `stroke` ≠ none) et `font-size` (text/tspan non vides) à la taille imprimée. Seuils `MIN_LINE_MM=0.5`, `MIN_TEXT_MM=2.1`. `find_thin_areas(svg, print_width_mm, min_mm=0.5, preview_path?)` : rend le SVG **sans textes** à 300 dpi imprimés, ouverture morphologique par un disque de `min_mm` (numpy) → pixels plus fins ; regroupés en zones (cellules 2 mm), zones < `MIN_AREA_PIXELS`=40 ignorées ; aperçu gris/rouge. `find_narrow_gaps(svg, print_width_mm, min_mm=MIN_GAP_MM=0.5, keep_text=False, preview_path?)` : fermeture morphologique (dilatation puis érosion par le disque) → espaces vides qui se bouchent ; aperçu bleu. Briques communes : `_ink_mask`, `_erode`, `_dilate`, `_areas`, `_preview`. `export_print` rapporte : traits, textes, formes fines (alerte), espaces entre formes (alerte), espaces autour des textes (info). CLI : `--print-width <cm>` sur `render` / `render-scene` → `export_print` (PNG à `report.dpi` + rapport traits/textes + zones fines, aperçu `<svg>-controle.png`).
 
 ### `renderer/export.py`
 `svg_to_png(svg_path, png_path, dpi=300)` : `resvg_py.svg_to_bytes(svg_path=…, dpi=…)` → PNG RGBA transparent ; taille px = mm / 25.4 × dpi.

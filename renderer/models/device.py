@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 from pydantic import BaseModel, Field, root_validator
 
 class PhysicalDimensions(BaseModel):
@@ -32,10 +32,13 @@ class BaseComponent(BaseModel):
     legend_position: Literal["center", "bottom_left"] = "center"
     legend_bold: bool = False
     legend_font_size_mm: Optional[float] = Field(None, gt=0)
+    legend_letter_spacing_em: float = 0.0  # espacement des lettres de la légende, en fraction de sa taille
     legend_always: bool = False  # légende imprimée sur la machine (nom, marque) : visible même sans --detail
     legend_spans: Optional[List[TextSpan]] = None  # légende en plusieurs styles ; `legend` devient leur concaténation
     font_family: Optional[str] = None  # police de la légende ; None → police des légendes du thème
     underline: bool = False
+    # Champs redéfinis selon la variante du thème (ex. {"print": {"hidden": true}} pour le t-shirt).
+    variants: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
 
     @root_validator(pre=True)
     def legend_from_spans(cls, values):

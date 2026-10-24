@@ -58,7 +58,7 @@ def test_printed_text_always_visible_and_stretched(full_device, theme):
     detailed = svgwrite.Drawing().g()
     draw_device_to_group(detailed, full_device, theme, show_labels=True)
     assert "petit texte" in {e.text for e in detailed.elements if e.attribs.get("class") == "printed-text"}
-    assert printed["Acme"]["text-anchor"] == "start" and printed["Acme"]["font-weight"] == "bold"
+    assert printed["Acme"]["text-anchor"] == "start" and printed["Acme"]["font-weight"] == 700
     assert printed["MODEL-1"]["textLength"] == 20
 
 
@@ -218,7 +218,8 @@ def test_legend_spans_mix_weights_and_keep_spaces(theme):
     assert text["xml:space"] == "preserve"
     assert text["font-family"] == "Arial"
     spans = [(s.text, s["font-weight"], s.attribs.get("font-family")) for s in text.elements]
-    assert spans == [("Digitakt", 700, None), (" II", 200, "Segoe UI")]
+    thin = max(200, theme.labels.min_font_weight or 0)   # un thème d'impression peut imposer une graisse minimale
+    assert spans == [("Digitakt", 700, None), (" II", thin, "Segoe UI")]
 
 
 def test_icon_path_list_draws_each_path_as_is():
@@ -234,3 +235,30 @@ def test_stroke_icon_linecap():
     dwg = svgwrite.Drawing()
     draw_custom_icon(dwg, "M0 0H10", (0, 0, 10, 10), 5, 5, 10, 10, "#fff", mode="stroke", stroke_width_view=1, linecap="butt")
     assert dwg.elements[1]["stroke-linecap"] == "butt"
+
+
+def test_min_font_weight_thickens_thin_spans(theme):
+    from tests.conftest import make_device
+    device = make_device(components=[{
+        "type": "text", "x": 0.5, "y": 0.5,
+        "legend_spans": [{"text": "Octatrack", "weight": 700}, {"text": " MKII", "weight": 200}],
+    }])
+    thick = theme.copy(update={"labels": theme.labels.copy(update={"min_font_weight": 400})})
+    group = svgwrite.Drawing().g()
+    draw_device_to_group(group, device, thick)
+    spans = next(e for e in group.elements if e.elementname == "text").elements
+    assert [s["font-weight"] for s in spans] == [700, 400]
+
+
+def test_theme_variant_hides_and_overrides_components():
+    from renderer.device.draw import for_variant
+    from tests.conftest import make_device
+    device = make_device(components=[
+        {"type": "text", "x": 0.2, "y": 0.5, "legend": "A", "variants": {"print": {"hidden": True}}},
+        {"type": "text", "x": 0.5, "y": 0.5, "legend": "B", "variants": {"print": {"x": 0.1, "legend_font_size_mm": 7}}},
+    ])
+    hidden, moved = device.components
+    assert for_variant(hidden, "screen") is hidden
+    assert for_variant(hidden, "print") is None
+    printed = for_variant(moved, "print")
+    assert (printed.x, printed.legend_font_size_mm, moved.x) == (0.1, 7, 0.5)

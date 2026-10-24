@@ -48,11 +48,12 @@ def test_outputs_are_grouped_by_machine_and_by_scene():
 
 def test_render_all_generates_every_device_and_scene(tmp_path, monkeypatch):
     from typer.testing import CliRunner
-    from cli import DEVICES_DIR, SCENES_DIR, app
+    from cli import DEVICES_DIR, SCENES_DIR, TEXTS_DIR, app
     monkeypatch.chdir(tmp_path)
     result = CliRunner().invoke(app, ["render-all", "--theme", "flat"])
     assert result.exit_code == 0, result.output
     svgs = list((tmp_path / "output").rglob("*.svg"))
-    expected = (len(list(DEVICES_DIR.glob("*/*.json"))) + len(list(SCENES_DIR.glob("*.json")))) * 2
-    assert len(svgs) == expected
-    assert sum(1 for p in svgs if p.stem.endswith("-detail")) == expected // 2
+    with_detail = len(list(DEVICES_DIR.glob("*/*.json"))) + len(list(SCENES_DIR.glob("*.json")))
+    texts = len(list(TEXTS_DIR.glob("*.json")))
+    assert len(svgs) == with_detail * 2 + texts
+    assert sum(1 for p in svgs if p.stem.endswith("-detail")) == with_detail

@@ -45,6 +45,28 @@ Une scène place plusieurs appareils (positions absolues en mm ou relatives à u
 
 Les chemins des appareils dans une scène sont relatifs au fichier de scène. La scène n'a pas de fond : le SVG et le PNG sont transparents, prêts pour l'impression.
 
+## Texte et titres
+
+```powershell
+# Texte direct : **gras**, le reste fin ; lignes séparées par |
+python cli.py render-text --text "**NAYS** LIVE SETUP|DIGITAKT II · OCTATRACK MKII" --theme tshirt_dark --png
+
+# Texte décrit en JSON (tailles, espacements, graisses par ligne)
+python cli.py render-text texts/nays_live_setup.json --theme tshirt_dark --print-width 20
+```
+
+Le SVG est recadré au plus juste sur le texte. Une scène peut aussi avoir un titre (`title`), voir [JSON.md](JSON.md).
+
+## Impression sur t-shirt
+
+```powershell
+python cli.py render-scene scenes/nays_2026_portrait.json --theme tshirt_dark --print-width 28
+```
+
+`--print-width` (en cm) active le mode impression : le PNG transparent est produit exactement à cette largeur, à 300 dpi, et la commande vérifie qu'une fois réduits les traits restent ≥ 0,5 mm et les textes ≥ 2,1 mm (seuils courants en DTF/DTG, à confirmer avec l'imprimeur). Les formes pleines (logos, pictogrammes) sont aussi contrôlées sur l'image finale : les zones trop fines sont listées et montrées en rouge dans `…-controle.png`. Les **espaces entre traits** trop étroits (moins de 0,5 mm imprimés, qui risquent de se boucher quand l'encre s'étale) sont signalés en bleu dans `…-espaces.png` ; ceux autour des textes (souvent l'intérieur des lettres) sont donnés à titre indicatif dans `…-espaces-textes.png`.
+
+Le thème `tshirt_dark` est pensé pour un t-shirt noir : traits clairs épais, LED en points rouges pleins, sans vis, câbles épais et opaques, graisse minimale des textes (`labels.min_font_weight`).
+
 ## Tout générer
 
 ```powershell
@@ -79,6 +101,7 @@ Les appareils définissent aussi leurs ports (`direction`, `signal`, position `x
 | Dossier | Contenu |
 | --- | --- |
 | `devices/` | Layouts : Elektron Digitakt II, Octatrack ; Roland JX-08, TB-3 |
-| `themes/` | `dark_slate`, `flat` (Elektron Dark Pro), `outlined_dark`, `outlined_light` |
-| `scenes/` | `nays_2026` et ses variantes de mise en page : `_bloc` (affiche paysage), `_carre` (t-shirt), `_portrait`, `_bandeau` (panoramique), `_colonne` (verticale) |
+| `themes/` | `dark_slate`, `flat` (Elektron Dark Pro), `outlined_dark`, `outlined_light`, `tshirt_dark` (impression sur t-shirt noir) |
+| `scenes/` | `nays_2026` et ses variantes de mise en page : `_bloc` (affiche paysage), `_carre` (t-shirt), `_portrait`, `_bandeau` (panoramique), `_colonne` (verticale), `_tshirt` (portrait + titre) |
+| `texts/` | Titres : `nays_live_setup` |
 | `output/` | SVG et PNG générés |

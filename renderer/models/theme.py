@@ -12,13 +12,17 @@ class LabelStyle(BaseModel):
     fill: Optional[str] = None
     font_family: str = "sans-serif"
     font_size_mm: float = Field(2.5, gt=0)
+    min_font_weight: Optional[int] = Field(
+        None, ge=100, le=900,
+        description="Graisse minimale des textes (ex. 400 pour l'impression : remplace les graisses trop fines)",
+    )
 
 class CableColors(BaseModel):
     """Couleur d'un câble selon le type de signal de ses ports."""
     audio: str = "#3b82f6"
-    midi: str = "#f59e0b"
+    midi: str = "#ef4444"
     usb: str = "#a855f7"
-    power: str = "#ef4444"
+    power: str = "#facc15"
 
 class CableStyle(BaseModel):
     width_mm: float = Field(1.2, gt=0, description="Épaisseur d'un câble")
@@ -45,6 +49,7 @@ class PortStyle(BaseModel):
 
 class Theme(BaseModel):
     name: str
+    variant: str = Field("screen", description="Variante appliquée aux composants qui en définissent une (ex. print)")
     background: Dict[str, Any]
     components: Dict[str, ComponentStyle]
     labels: LabelStyle = Field(default_factory=LabelStyle)

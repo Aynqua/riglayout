@@ -266,7 +266,13 @@
       "x": 0.2217,
       "y": 0.5824,
       "width_mm": 14.5,
-      "height_mm": 29.5
+      "height_mm": 29.5,
+      "variants": {
+        "print": {
+          "height_mm": 28.3,
+          "y": 0.5789
+        }
+      }
     },
     {
       "type": "pad",
@@ -275,7 +281,13 @@
       "x": 0.3135,
       "y": 0.5824,
       "width_mm": 14.5,
-      "height_mm": 29.5
+      "height_mm": 29.5,
+      "variants": {
+        "print": {
+          "height_mm": 28.3,
+          "y": 0.5789
+        }
+      }
     },
     {
       "type": "pad",
@@ -284,7 +296,13 @@
       "x": 0.377,
       "y": 0.5824,
       "width_mm": 14.5,
-      "height_mm": 29.5
+      "height_mm": 29.5,
+      "variants": {
+        "print": {
+          "height_mm": 28.3,
+          "y": 0.5789
+        }
+      }
     },
     {
       "type": "pad",
@@ -293,7 +311,13 @@
       "x": 0.5,
       "y": 0.5824,
       "width_mm": 14.5,
-      "height_mm": 29.5
+      "height_mm": 29.5,
+      "variants": {
+        "print": {
+          "height_mm": 28.3,
+          "y": 0.5789
+        }
+      }
     },
     {
       "type": "pad",
@@ -302,7 +326,13 @@
       "x": 0.5625,
       "y": 0.5824,
       "width_mm": 14.5,
-      "height_mm": 29.5
+      "height_mm": 29.5,
+      "variants": {
+        "print": {
+          "height_mm": 28.3,
+          "y": 0.5789
+        }
+      }
     },
     {
       "type": "pad",
@@ -311,7 +341,13 @@
       "x": 0.625,
       "y": 0.5824,
       "width_mm": 14.5,
-      "height_mm": 29.5
+      "height_mm": 29.5,
+      "variants": {
+        "print": {
+          "height_mm": 28.3,
+          "y": 0.5789
+        }
+      }
     },
     {
       "type": "pad",
@@ -320,7 +356,13 @@
       "x": 0.7178,
       "y": 0.5824,
       "width_mm": 14.5,
-      "height_mm": 29.5
+      "height_mm": 29.5,
+      "variants": {
+        "print": {
+          "height_mm": 28.3,
+          "y": 0.5789
+        }
+      }
     },
     {
       "type": "pad",
@@ -329,7 +371,13 @@
       "x": 0.7803,
       "y": 0.5824,
       "width_mm": 14.5,
-      "height_mm": 29.5
+      "height_mm": 29.5,
+      "variants": {
+        "print": {
+          "height_mm": 28.3,
+          "y": 0.5789
+        }
+      }
     },
     {
       "type": "pad",
@@ -436,7 +484,12 @@
         51,
         1262,
         697
-      ]
+      ],
+      "variants": {
+        "print": {
+          "hidden": true
+        }
+      }
     },
     {
       "type": "logo",
@@ -459,7 +512,14 @@
         19.594,
         367.13,
         79.758
-      ]
+      ],
+      "variants": {
+        "print": {
+          "x": 0.1478,
+          "width_mm": 48.75,
+          "height_mm": 10.59
+        }
+      }
     },
     {
       "type": "text",

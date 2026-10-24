@@ -1,0 +1,11 @@
+{
+  "lines": [
+    {"text": "**NAYS** LIVE SETUP", "size_mm": 22, "letter_spacing_em": 0.1},
+    {"text": "DIGITAKT II · OCTATRACK MKII · JX-08 · TB-3", "size_mm": 6.5, "letter_spacing_em": 0.25, "regular_weight": 500}
+  ],
+  "font_family": "Helvetica Neue, Arial, sans-serif",
+  "bold_weight": 700,
+  "regular_weight": 200,
+  "line_gap_em": 1.6,
+  "align": "center"
+}

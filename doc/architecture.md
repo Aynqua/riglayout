@@ -17,6 +17,7 @@ Séparation stricte **données (layouts JSON) / apparence (thèmes JSON) / moteu
 | Langage | Python 3.13 (officiel python.org, **pas** MSYS2 : pas de wheels binaires) | venv local `venv/` (layout Windows `venv/Scripts/…`), ignoré par git |
 | Validation | **pydantic 1.10** (v1 !) | `root_validator`, `Field(...)`, `Model(**dict)`. Ne pas utiliser l'API v2 (`model_validator`, `model_dump`) |
 | SVG | svgwrite 1.4.3 | unités = mm (viewBox en mm, `size="…mm"`) |
+| Contrôle d'impression | numpy 2.5, Pillow 13 | zones trop fines dans l'image finale (`renderer/print_check.py`) |
 | PNG | resvg-py 0.5.0 | rasterisation SVG → PNG RGBA transparent, `dpi` convertit les mm (wheel abi3 win_amd64) |
 | CLI | typer 0.27 (+ rich) | |
 | Tests | pytest 9.1 | `tests/`, config `pytest.ini` (`pythonpath = .`) |
@@ -37,12 +38,16 @@ renderer/
     device.py          DeviceLayout, composants, ports
     theme.py           Theme, ComponentStyle, LabelStyle, CableStyle
     scene.py           Scene, positions, connexions
+    text.py            TextBlock, TextLine, parse_markup (**gras** / fin)
   device/              Rendu d'un appareil
     draw.py            draw_device_to_group (moteur partagé), render_svg
     legends.py         Couleur / taille / placement des légendes
     icons.py           Registre ICONS des pictogrammes + icônes custom par path SVG
     ports.py           Bord d'un port (port_side, port_edge_point) + dessin prise/nom en mode détail
   export.py            svg_to_png : PNG transparent via resvg-py
+  print_check.py       Mode impression : tailles imprimées, traits/textes/zones trop fins
+  text/
+    render.py          Blocs de texte : mesure sur rendu réel, alignement exact, SVG recadré
   scene/               Rendu de scène
     validation.py      validate_scene_connections
     layout.py          Positions absolues/relatives, chevauchements, encombrement
@@ -63,6 +68,7 @@ devices/<marque>/*.json   Layouts d'appareils (données)
   roland/jx-08.json         JX-08 (300×128 mm, maquette simplifiée)
   roland/tb-3.json          TB-3 (240×173 mm, maquette simplifiée)
 themes/*.json          Thèmes : dark_slate, flat ("Elektron Dark Pro"), outlined_dark, outlined_light
+texts/*.json           Titres (TextBlock)
 scenes/*.json          Scènes : nays_2026.json ("Live Rig Principal", 4 appareils, 7 câbles)
 output/                Sorties : <machine>/<machine>-<thème>[-detail].svg|png ; scenes/<scène>/scene-<scène>-<thème>[-detail].svg|png ; versionnées
 README.md, JSON.md     Doc utilisateur (FR) : usage CLI / schéma JSON

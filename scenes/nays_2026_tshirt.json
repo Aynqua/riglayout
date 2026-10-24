@@ -1,0 +1,133 @@
+{
+    "name": "nays_2026 – t-shirt",
+    "devices": [
+        {
+            "id": "digitakt",
+            "device": "../devices/elektron/digitakt2.json",
+            "position": {
+                "type": "absolute",
+                "x": 0.0,
+                "y": 374.0
+            }
+        },
+        {
+            "id": "octatrack",
+            "device": "../devices/elektron/octatrack2.json",
+            "position": {
+                "type": "absolute",
+                "x": 70.0,
+                "y": 163.0
+            }
+        },
+        {
+            "id": "jx08",
+            "device": "../devices/roland/jx-08.json",
+            "position": {
+                "type": "absolute",
+                "x": 90.0,
+                "y": 0.0
+            }
+        },
+        {
+            "id": "tb3",
+            "device": "../devices/roland/tb-3.json",
+            "position": {
+                "type": "absolute",
+                "x": 240.0,
+                "y": 374.0
+            }
+        }
+    ],
+    "connections": [
+        {
+            "source": {
+                "device_id": "digitakt",
+                "port_id": "midi-out"
+            },
+            "target": {
+                "device_id": "octatrack",
+                "port_id": "midi-in"
+            }
+        },
+        {
+            "source": {
+                "device_id": "octatrack",
+                "port_id": "midi-thru"
+            },
+            "target": {
+                "device_id": "jx08",
+                "port_id": "midi-in"
+            }
+        },
+        {
+            "source": {
+                "device_id": "jx08",
+                "port_id": "midi-out"
+            },
+            "target": {
+                "device_id": "tb3",
+                "port_id": "midi-in"
+            }
+        },
+        {
+            "source": {
+                "device_id": "digitakt",
+                "port_id": "audio-out-l"
+            },
+            "target": {
+                "device_id": "octatrack",
+                "port_id": "audio-in-a"
+            }
+        },
+        {
+            "source": {
+                "device_id": "digitakt",
+                "port_id": "audio-out-r"
+            },
+            "target": {
+                "device_id": "octatrack",
+                "port_id": "audio-in-b"
+            }
+        },
+        {
+            "source": {
+                "device_id": "jx08",
+                "port_id": "output"
+            },
+            "target": {
+                "device_id": "octatrack",
+                "port_id": "audio-in-c"
+            }
+        },
+        {
+            "source": {
+                "device_id": "tb3",
+                "port_id": "out-l"
+            },
+            "target": {
+                "device_id": "octatrack",
+                "port_id": "audio-in-d"
+            }
+        }
+    ],
+    "title": {
+        "lines": [
+            {
+                "text": "**NAYS** LIVE SETUP",
+                "size_mm": 44,
+                "letter_spacing_em": 0.1
+            },
+            {
+                "text": "DIGITAKT II · OCTATRACK MKII · JX-08 · TB-3",
+                "size_mm": 13,
+                "letter_spacing_em": 0.25,
+                "regular_weight": 500
+            }
+        ],
+        "font_family": "Helvetica Neue, Arial, sans-serif",
+        "bold_weight": 700,
+        "regular_weight": 200,
+        "line_gap_em": 1.6
+    },
+    "title_gap_mm": 30
+}

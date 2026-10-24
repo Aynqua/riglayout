@@ -62,9 +62,9 @@
     "label_font_size_mm": 2.0,
     "colors": {
       "audio": "#1d4ed8",
-      "midi": "#c2410c",
+      "midi": "#b91c1c",
       "usb": "#7e22ce",
-      "power": "#b91c1c"
+      "power": "#a16207"
     }
   }
 }

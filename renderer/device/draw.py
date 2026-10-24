@@ -17,8 +17,21 @@ def draw_device_to_group(dwg_container, layout: DeviceLayout, theme: Theme, show
         draw_ports(dwg_container, layout, theme)
 
 
+def for_variant(component, variant: str):
+    """Le composant tel qu'il doit être dessiné pour cette variante de thème, ou None s'il est masqué."""
+    overrides = component.variants.get(variant)
+    if not overrides:
+        return component
+    if overrides.get("hidden"):
+        return None
+    return component.copy(update={k: v for k, v in overrides.items() if k != "hidden"})
+
+
 def _draw_components(dwg_container, layout: DeviceLayout, theme: Theme, show_labels: bool):
-    for comp in layout.components:
+    for original in layout.components:
+        comp = for_variant(original, theme.variant)
+        if comp is None:
+            continue
         cx = comp.x * layout.physical.width_mm
         cy = comp.y * layout.physical.height_mm
 

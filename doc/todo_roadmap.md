@@ -5,6 +5,7 @@
 ## État actuel
 
 **Fait** :
+- impression t-shirt : thème `tshirt_dark` (traits ≥ 0,7 mm imprimés à 28 cm, LED rouges pleines, sans vis, câbles opaques, `min_font_weight` 500) et mode `--print-width` (PNG à la taille d'impression + contrôle traits/textes) ;
 - variantes de mise en page `scenes/nays_2026_{bloc,carre,portrait,bandeau,colonne}.json`, choisies en explorant toutes les permutations par famille (score = 300 × croisements + longueur de câble) ; les tests de câblage tournent sur toutes les scènes du dossier ;
 - logos Roland : emblème (tracé fourni par l'utilisateur, plein) + mot officiel (Wikimedia, liste de paths) ; textes trop petits en `detail_only` (« POLYPHONIC SYNTHESIZER », « TOUCH BASSLINE ») ;
 - scène `nays_2026` : rangée du haut alignée (TB-3 `relative` à droite du JX-08, 30 mm au-dessus de la rangée du bas) ;

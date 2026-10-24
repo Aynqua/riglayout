@@ -18,6 +18,7 @@
       "legend_always": true,
       "legend_position": "bottom_left",
       "legend_font_size_mm": 5.5,
+      "variants": {"print": {"legend_font_size_mm": 6.0, "legend_letter_spacing_em": 0.09}},
       "x": 0.471,
       "y": 0.331,
       "width_mm": 73.5,
